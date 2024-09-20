@@ -1,0 +1,419 @@
+/* Font definitions */
+@font-face {
+    font-family: 'AvenirNextRegular';
+    src: url('Fonts/Avenir.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'DINBold';
+    src: url('Fonts/DIN-Bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* General body styling */
+body {
+    font-family: 'AvenirNextRegular', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    color: #111;
+    box-sizing: border-box;
+    height: 100vh;
+    overflow: hidden; /* Prevent body scrolling */
+}
+
+/* Header styling */
+header {
+    width: 100%;
+    background: #fff;
+    color: #111;
+    position: fixed;
+    text-align: left;
+    z-index: 1;
+    box-shadow: 0 0px 0px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+    height: 3rem;
+}
+
+.title {
+    color: #111;
+    transition: color 0.5s ease;
+    font-size: 24px;
+    font-family: 'AvenirNextRegular', Arial, Helvetica, sans-serif;
+    text-decoration: none;
+}
+
+/* Navigation styles */
+nav {
+    margin: 0;
+    position: relative;
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+nav ul li {
+    margin-left: 1rem;
+}
+
+nav a {
+    text-decoration: none;
+    color: #111;
+    font-size: 18px;
+    transition: color 0.5s ease;
+}
+
+nav a:hover {
+    color: rgb(218, 218, 218);
+}
+
+/* Nav close button */
+.nav-close-btn {
+    display: none;
+    background: #111;
+    border: none;
+    font-size: 16px;
+    color: #fff;
+    cursor: pointer;
+    position: absolute;
+    padding: 0.3rem;
+    top: 3.28rem; /* Vertical position */
+    right: 1rem; /* Horizontal position */
+    z-index: 2;
+}
+
+/* Hover effect for the nav close button */
+.nav-close-btn:hover {
+    background: #fff; /* Change background color on hover */
+    color: #111; /* Change text color on hover */
+}
+
+.column-photos.expanded {
+    grid-column: 2 / 4; /* Span from column 2 to 4 */
+}
+
+/* Ensure button is visible when needed */
+.column-photos.expanded .nav-close-btn {
+    display: block;
+}
+
+/* Disable hover scale effect when images are expanded */
+.column-photos.expanded .image-container img:hover {
+    transform: none; /* Remove the scale effect */
+    cursor: default;
+}
+
+/* Container styles */
+.container {
+    display: grid;
+    grid-template-columns: 2fr 3fr 2fr;
+    gap: 1rem;
+    padding: 2rem;
+    height: calc(100vh - 3rem);
+    box-sizing: border-box;
+    padding-top: 3rem;
+}
+
+/* Column styles */
+.column {
+    padding: 1rem;
+    background-color: #fff;
+    outline: 0px solid #111;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* Column title styles */
+.column-title {
+    padding-top: 0;
+    grid-column: 1;
+    background-color: #fefefe;
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-start;
+}
+
+.title-content {
+    display: inline-block;
+    font-family: 'DINBold', Arial, sans-serif;
+    font-size: 383px;
+    font-weight: normal;
+    line-height: 0;
+    transition: transform 8s ease;
+    white-space: nowrap;
+    transform: translateX(0);
+    position: absolute;
+    top: -220px;
+}
+
+/* 
+    Hieronder een aantal css classes die je kan gebruiken om de titels bij projecten de hoogte te laten vullen 
+    deze classes moet je als volgt gebruiken in je html bestand omdat deze de .title content class aanvullen en bepaalde eigenschappen aanvullen
+    in je html in class="title-content title-content--four-lines" (vervang "four voor het aantal regels" wat van toepassing is maar let op dat de class hier wel voor bestaat of vul deze zelf aan
+
+    ^^ zie wall.html voor de de juiste toepssing zoals hierboven omschreven
+*/
+.title-content--one-line {
+    font-size: calc(100vh - 3rem);
+    line-height: calc(100vh - 3rem);
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-between;
+    top: 0;
+    bottom: 0;
+
+}
+
+.title-content--one-line p {
+    margin: 0;
+}
+
+.title-content--two-lines {
+    font-size: calc(100vh / 2  - 3rem);
+    line-height: calc(100vh / 2 - 3rem);
+
+    /* Stel je wilt deze classen uitbreiden voor een titel met meer regels dan degene die ik voor je heb aangemaakt
+    dan kan je het beste deze bestaande kopieren, het aantal in de naam vervangen dus bijv. .title-content--five-lines
+    en dan ook in de gekopierde versie de calc voor zowel de font-size als line-height aanpassen waarbij je de 2 vervangt voor het aantal regels dus in het geval van het gegeven voorbeeld 5
+    vergeet nietom net zoals onder deze class om ook een .title-content--five-lines p regel toe te voegen met daarin een margin: 0; zodat de afstand tussen de regels goed geregeld wordt door de flex-box */
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-between;
+    top: 0;
+    bottom: 0;
+
+} 
+
+.title-content--two-lines p {
+    margin: 0;
+}
+
+.title-content--three-lines {
+    font-size: calc(100vh / 3 - 3rem);
+    line-height: calc(100vh / 3 - 3rem);
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-between;
+    top: 0;
+    bottom: 0;
+
+}
+
+.title-content--three-lines p {
+    margin: 0;
+}
+
+.title-content--four-lines {
+    font-size: calc(100vh / 3 - 3rem);
+    line-height: calc(100vh / 4 - 3rem);
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-between;
+    top: 0;
+    bottom: 0;
+}
+
+.title-content--four-lines p {
+    margin: 0;
+}
+
+.column-title:hover .title-content {
+    transform: translateX(-90%);
+}
+
+/* Column photos styles */
+.column-photos {
+    grid-column: 2;
+    background-color: #fff;
+    /* hier hetzelfde verhaal als voor de homepage voor de huidige weergave van foto's haalt een flexbox niets uit, maar kan wel handig wezen voor ruimte tussen de foto's middels gap (bijv collumn-gap: 1rem, row-gap: 1rem of voor beide gap: 1rem) */
+    /* display: flex; */
+    /* justify-content: center; */
+    align-items: center;
+    padding: 0;
+    height: calc(100vh - 4rem);
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden; /* Hide overflow to prevent scrollbars */
+}
+
+/* Hide scrollbars in Webkit-based browsers (Chrome, Safari) */
+.column-photos::-webkit-scrollbar {
+    display: none; /* Hide scrollbar */
+}
+
+/* Transition effect for column-photos expanding */
+.column-photos {
+    transition: transform 0.5s ease-in-out, width 0.5s ease-in-out;
+    transform-origin: center; /* Ensure the scaling is centered */
+    scrollbar-width: none; /* Hide scrollbar */
+}
+
+/* Image container styles */
+.image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 1rem;
+    box-sizing: border-box;
+    height: 100%;
+    overflow-y: auto; /* Allow vertical scrolling */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+/* Hide scrollbars in image container */
+.image-container::-webkit-scrollbar {
+    display: none; /* Hide scrollbar */
+}
+
+/* Hide scrollbars in Firefox */
+.image-container {
+    scrollbar-width: none; /* Hide scrollbar */
+}
+
+.image-container a {
+    width: 100%;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    padding-bottom: 22px;
+}
+
+.image-container img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0px 0px #111;
+}
+
+/* Column info styles */
+.column-info {
+    grid-column: 3;
+    background-color: #fff;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    opacity: 0;
+    transition: opacity 1s ease-in;
+}
+
+/* Verberg scrollbars in de .column-info */
+.column-info {
+    overflow-y: auto; /* Maak de inhoud van de kolom scrollbaar */
+    scrollbar-width: none; /* Verberg de scrollbar in Firefox */
+    -ms-overflow-style: none; /* Verberg de scrollbar in IE en Edge */
+}
+
+/* Verberg scrollbalken in Webkit-gebaseerde browsers (Chrome, Safari) */
+.column-info::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
+/* Show the article content */
+.column-info.show {
+    opacity: 1;
+}
+
+.default-content {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    color: #111;
+    transition: opacity 0.5s ease-in;
+}
+
+.article-content {
+    padding: 1rem;
+    opacity: 0;
+    transition: opacity 1s ease-in;
+    font-size: 16px;
+    max-height: 100%; /* Zorg ervoor dat de inhoud zich aanpast */
+    overflow-y: auto; /* Voeg scrollbaarheid toe aan de artikelinhoud */
+    padding-right: 1rem; /* Optioneel: ruimte maken voor de scrollbar */
+
+}
+
+.article-content h2{
+    font-size: 24px;
+    font-weight: normal;
+}
+
+/* Verberg scrollbalken in de article-content */
+.article-content::-webkit-scrollbar {
+    display: none; /* Verberg scrollbar */
+}
+
+.article-content {
+    scrollbar-width: none; /* Verberg scrollbar in Firefox */
+}
+
+.column-info.show .article-content {
+    opacity: 1;
+}
+
+.column-info.show .default-content {
+    opacity: 0;
+}
+
+/* When column 2 expands, column info must hide */
+.column-info.expanded {
+    opacity: 0;
+    height: 0; /* Hide column info completely */
+}
+
+/* Footer styling */
+footer {
+    background-color: #fff;
+    color: #111;
+    text-align: center;
+    font-size: 10px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-height: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 -0px 0px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    margin: 0;
+    padding: 0;
+}
+
+.contact-link {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 16px;
+}
+
+.contact-link a {
+    color: #111; /* Standaard kleur voor de link tekst */
+    text-decoration: none; /* Zorgt ervoor dat er geen onderstreping is */
+}
+
+.contact-link a:hover {
+    color: rgb(218, 218, 218); /* Hover-kleur voor de link */
+}

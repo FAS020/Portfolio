@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAS - Concept Art</title>
+    <link rel="stylesheet" href="project-styles.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <span class="title" id="project-title">Concept Art</span>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li> <!-- Zorg ervoor dat index.html correct is -->
+                    <li><a href="#" data-section="project-info">Project Info</a></li>
+                </ul>
+                <button class="nav-close-btn" style="display: none;">Close</button>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <div class="column column-title">
+            <div class="title-content title-content--two-lines">
+                <p>Concept</p>
+                <p>Art</p>
+            </div>
+        </div>
+        <div class="column column-photos">
+            <div class="image-container">
+                <img src="Links/Game/1.jpg" alt="Image 1" data-expand="true">
+                <img src="Links/Game/2.jpg" alt="Image 2" data-expand="true">
+                <img src="Links/Game/3.jpg" alt="Image 3" data-expand="true">
+                <img src="Links/Game/4.jpg" alt="Image 4" data-expand="true">
+                <img src="Links/Game/5.jpg" alt="Image 5" data-expand="true">
+                <img src="Links/Game/6.jpg" alt="Image 6" data-expand="true">
+                <img src="Links/Game/7.jpg" alt="Image 8" data-expand="true">
+            </div>
+        </div>
+        <div class="column column-info">
+            <div class="default-content"></div>
+            <div class="article-content">
+                <h2>Concept Art</h2>
+                <p>Een concept design voor een game wereld.</p>
+
+                <p>    Een van mijn eerste resulaten van digitaal tekenen. 
+                        Game design is een beroep en opleiding op zich, 
+                        maar een concept uitdenken is iets waar ik veel plezier uit haal. 
+                </p>
+                <p>
+                    Het idee voor de game is dat de planeet uiteen is geëxplodeerd.
+                    Alle brokken aarde zijn nu kleine planeten op zich, met allen een eigen atmosfeer.
+                    De speler kan met de juiste middelen en uitrusting deze verlaten werelddelen verkennen.
+                    Ook zijn er veel delen van de planeet blootgesteld aan radiatie; leven op deze delen is gemuteerd en gevaarlijk.                    
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Portfolio Franco A. Soolsma. All rights reserved.</p>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const columnPhotos = document.querySelector('.column-photos');
+        const columnInfo = document.querySelector('.column-info');
+        const images = document.querySelectorAll('.column-photos img');
+        const navCloseBtn = document.querySelector('.nav-close-btn');
+
+        // Handle navigation click events
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                if (link.getAttribute('href') === 'index.html') {
+                    // Allow default behavior for Home link
+                    return;
+                }
+                e.preventDefault(); // Prevent default behavior for other links
+                const section = link.getAttribute('data-section');
+
+                if (section === 'project-info') {
+                    columnInfo.classList.add('show');
+                    columnPhotos.classList.remove('expanded');
+                    document.querySelector('.article-content').style.opacity = 1;
+                    document.querySelector('.default-content').style.opacity = 0;
+                } else {
+                    columnInfo.classList.remove('show');
+                    columnPhotos.classList.remove('expanded');
+                    document.querySelector('.article-content').style.opacity = 0;
+                    document.querySelector('.default-content').style.opacity = 1;
+                }
+            });
+        });
+
+        // Handle image click events
+        images.forEach(image => {
+            image.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent the click event from bubbling up
+                columnPhotos.classList.add('expanded');
+                columnInfo.classList.add('expanded');
+                navCloseBtn.style.display = 'block'; // Show the close button
+            });
+        });
+
+        // Handle click to collapse the expanded state when clicking outside the image container
+        document.addEventListener('click', (e) => {
+            if (!columnPhotos.contains(e.target) && !columnInfo.contains(e.target) && !navCloseBtn.contains(e.target)) {
+                columnPhotos.classList.remove('expanded');
+                columnInfo.classList.remove('expanded');
+                navCloseBtn.style.display = 'none'; // Hide the close button
+            }
+        });
+
+        // Handle close button click in the nav
+        navCloseBtn.addEventListener('click', () => {
+            columnPhotos.classList.remove('expanded');
+            columnInfo.classList.remove('expanded');
+            navCloseBtn.style.display = 'none'; // Hide the close button
+        });
+    });
+    </script>
+</body>
+</html>

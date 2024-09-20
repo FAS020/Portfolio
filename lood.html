@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAS - Loden letters</title>
+    <link rel="stylesheet" href="project-styles.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <span class="title" id="project-title">Loden letters</span>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li> <!-- Zorg ervoor dat index.html correct is -->
+                    <li><a href="#" data-section="project-info">Project Info</a></li>
+                </ul>
+                <button class="nav-close-btn" style="display: none;">Close</button>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <div class="column column-title">
+            <div class="title-content title-content--two-lines">
+                <p>Loden</p>
+                <p>Letters</p>
+            </div>
+        </div>
+        <div class="column column-photos">
+            <div class="image-container">
+                <img src="Links/Typografie/lood/Lood_2.jpg" alt="Image 1" data-expand="true">
+                <img src="Links/Typografie/lood/Lood_1.jpg" alt="Image 2" data-expand="true">
+                <img src="Links/Typografie/lood/Lood_3.jpg" alt="Image 3" data-expand="true">
+                <img src="Links/Typografie/lood/Lood_4.jpg" alt="Image 4" data-expand="true">
+                <img src="Links/Typografie/lood/Lood_5.jpg" alt="Image 5" data-expand="true">
+                <img src="Links/Typografie/lood/Lood_6.jpg" alt="Image 6" data-expand="true">
+                <img src="Links/Typografie/lood/Lood_7.jpg" alt="Image 7" data-expand="true">
+                <img src="Links/Typografie/lood/Lood_8.jpg" alt="Image 8" data-expand="true">
+            </div>
+        </div>
+        <div class="column column-info">
+            <div class="default-content"></div>
+            <div class="article-content">
+                <h2>Loden Letters</h2>
+                <p>Een analoge, typografische opdracht om loden letters te gebruiken zonder de klassieke functie als focus.
+                </p>
+
+                <p> Dit resulteerde in veel expirimenteren en uiteindelijk een uitvouwbare dubbelzijdige posterbundel van alle experimenten.
+                    De lode letters uit hun proportie trekken is iets wat mij het meest is bijgebleven. 
+                    Het object is niet meer herkenbaar wanneer het 'uit de kluiten gewassen wordt'
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Portfolio Franco A. Soolsma. All rights reserved.</p>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const columnPhotos = document.querySelector('.column-photos');
+        const columnInfo = document.querySelector('.column-info');
+        const images = document.querySelectorAll('.column-photos img');
+        const navCloseBtn = document.querySelector('.nav-close-btn');
+
+        // Handle navigation click events
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                if (link.getAttribute('href') === 'index.html') {
+                    // Allow default behavior for Home link
+                    return;
+                }
+                e.preventDefault(); // Prevent default behavior for other links
+                const section = link.getAttribute('data-section');
+
+                if (section === 'project-info') {
+                    columnInfo.classList.add('show');
+                    columnPhotos.classList.remove('expanded');
+                    document.querySelector('.article-content').style.opacity = 1;
+                    document.querySelector('.default-content').style.opacity = 0;
+                } else {
+                    columnInfo.classList.remove('show');
+                    columnPhotos.classList.remove('expanded');
+                    document.querySelector('.article-content').style.opacity = 0;
+                    document.querySelector('.default-content').style.opacity = 1;
+                }
+            });
+        });
+
+        // Handle image click events
+        images.forEach(image => {
+            image.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent the click event from bubbling up
+                columnPhotos.classList.add('expanded');
+                columnInfo.classList.add('expanded');
+                navCloseBtn.style.display = 'block'; // Show the close button
+            });
+        });
+
+        // Handle click to collapse the expanded state when clicking outside the image container
+        document.addEventListener('click', (e) => {
+            if (!columnPhotos.contains(e.target) && !columnInfo.contains(e.target) && !navCloseBtn.contains(e.target)) {
+                columnPhotos.classList.remove('expanded');
+                columnInfo.classList.remove('expanded');
+                navCloseBtn.style.display = 'none'; // Hide the close button
+            }
+        });
+
+        // Handle close button click in the nav
+        navCloseBtn.addEventListener('click', () => {
+            columnPhotos.classList.remove('expanded');
+            columnInfo.classList.remove('expanded');
+            navCloseBtn.style.display = 'none'; // Hide the close button
+        });
+    });
+    </script>
+</body>
+</html>

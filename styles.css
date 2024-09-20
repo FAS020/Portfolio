@@ -1,0 +1,399 @@
+/* Font definitions */
+@font-face {
+    font-family: 'AvenirNextRegular';
+    src: url('Fonts/Avenir.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'DINBold';
+    src: url('Fonts/DIN-Bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* General body styling */
+body {
+    font-family: 'AvenirNextRegular', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    color: #111;
+    box-sizing: border-box;
+    height: 100vh;
+}
+
+/* Header styling */
+header {
+    width: 100%;
+    background: #fff;
+    color: #111;
+    position: fixed;
+    text-align: left;
+    z-index: 1;
+    box-shadow: 0 0px 0px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+    height: 3rem;
+}
+
+.title {
+    color: #111;
+    transition: color 0.5s ease;
+    font-size: 24px;
+    font-family: 'AvenirNextRegular', Arial, Helvetica, sans-serif;
+    text-decoration: none;
+}
+
+/* Navigation styles */
+nav {
+    margin: 0;
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+nav ul li {
+    margin-left: 1rem;
+}
+
+nav a {
+    text-decoration: none;
+    color: #111; /* Default color for nav links */
+    font-size: 18px;
+    transition: color 0.5s ease; /* Smooth color transition */
+}
+
+nav a:hover {
+    color: rgb(218, 218, 218); /* Color change on hover */
+}
+
+/* Container styles */
+.container {
+    display: grid;
+    grid-template-columns: 2fr 3fr 2fr;
+    gap: 1rem;
+    padding: 2rem;
+    height: calc(100vh - 3rem);
+    box-sizing: border-box;
+    padding-top: 3rem;
+}
+
+.column {
+    padding: 1rem;
+    background-color: #fff;
+    outline: 0px solid #111;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.column-title {
+    padding-top: 0rem;
+    grid-column: 1;
+    background-color: #fefefe;
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-start;
+}
+
+.title-content {
+    display: inline-block;
+    font-family: 'DINBold', Arial, sans-serif;
+    font-size: 383px;
+    font-weight: normal;
+    line-height: 0;
+    transition: transform 8s ease;
+    white-space: nowrap;
+    transform: translateX(0);
+    position: absolute;
+    top: -220px;
+}
+
+.column-title:hover .title-content {
+    transform: translateX(-90%);
+}
+
+.title-content {
+    display: inline-block;
+    font-family: 'DINBold', Arial, sans-serif;
+    font-size: 383px;
+    font-weight: normal;
+    line-height: 0;
+    transition: transform 8s ease;
+    white-space: nowrap;
+    transform: translateX(0);
+    position: absolute;
+    top: -220px;
+}
+
+/* 
+    Hieronder een aantal css classes die je kan gebruiken om de titels bij projecten de hoogte te laten vullen 
+    deze classes moet je als volgt gebruiken in je html bestand omdat deze de .title content class aanvullen en bepaalde eigenschappen aanvullen
+    in je html in class="title-content title-content--four-lines" (vervang "four voor het aantal regels" wat van toepassing is maar let op dat de class hier wel voor bestaat of vul deze zelf aan
+
+    ^^ zie wall.html voor de de juiste toepssing zoals hierboven omschreven
+*/
+.title-content--one-line {
+    font-size: calc(100vh - 3rem);
+    line-height: calc(100vh - 3rem);
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-between;
+    top: 0;
+    bottom: 0;
+
+}
+
+.title-content--one-line p {
+    margin: 0;
+}
+
+.title-content--two-lines {
+    font-size: calc(100vh / 2  - 3rem);
+    line-height: calc(100vh / 2 - 3rem);
+
+    /* Stel je wilt deze classen uitbreiden voor een titel met meer regels dan degene die ik voor je heb aangemaakt
+    dan kan je het beste deze bestaande kopieren, het aantal in de naam vervangen dus bijv. .title-content--five-lines
+    en dan ook in de gekopierde versie de calc voor zowel de font-size als line-height aanpassen waarbij je de 2 vervangt voor het aantal regels dus in het geval van het gegeven voorbeeld 5
+    vergeet nietom net zoals onder deze class om ook een .title-content--five-lines p regel toe te voegen met daarin een margin: 0; zodat de afstand tussen de regels goed geregeld wordt door de flex-box */
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-between;
+    top: 0;
+    bottom: 0;
+
+} 
+
+.title-content--two-lines p {
+    margin: 0;
+}
+
+.title-content--three-lines {
+    font-size: calc(100vh / 3 - 3rem);
+    line-height: calc(100vh / 3 - 3rem);
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-between;
+    top: 0;
+    bottom: 0;
+
+}
+
+.title-content--three-lines p {
+    margin: 0;
+}
+
+.title-content--four-lines {
+    font-size: calc(100vh / 3 - 3rem);
+    line-height: calc(100vh / 4 - 3rem);
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-between;
+    top: 0;
+    bottom: 0;
+}
+
+.title-content--four-lines p {
+    margin: 0;
+}
+
+/* Column photos styles */
+.column-photos {
+    grid-column: 2;
+    background-color: #fff;
+    /* deze flexbox regels hieronder heb ik uitgezet voor de huidige weergave van foto's haalt een flexbox niets uit, maar kan wel handig wezen voor ruimte tussen de foto's middels gap (bijv collumn-gap: 1rem, row-gap: 1rem of voor beide gap: 1rem) */
+    /* display: flex; */
+    /* justify-content: center;  */
+    padding: 0;
+    height: calc(100vh - 4rem);
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+/* Hide scrollbar in all browsers */
+.column-photos::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
+.column-photos::-webkit-scrollbar-thumb {
+    background: transparent;
+}
+
+.column-photos::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.column-photos {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.image-container a {
+    width: 100%;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.image-container img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.image-container img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0px 0px #111;
+}
+
+/* Empty column styles */
+.column-empty {
+    grid-column: 3;
+    background-color: #fff;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.default-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+    transition: opacity 1s ease;
+    pointer-events: none; /* zorgt ervoor dat de inhoud erachter klikbaar blijft */
+}
+
+.article-content {
+    opacity: 0;
+    padding: 1rem;
+    font-size: 16px;
+    transition: opacity 1s ease-in;
+    max-height: 100%;
+    overflow-y: auto;
+    padding-right: 1rem;
+}
+
+.article-content img.article-image {
+    display: block;
+    max-width: 100%;
+    height: auto; /* Zorgt ervoor dat de hoogte automatisch wordt aangepast */
+    margin: 1rem 0; /* Optioneel: ruimte boven en onder de afbeelding */
+}
+
+
+/* Styling voor H2 in article-content */
+.article-content h2 {
+    font-size: 24px;
+    font-weight: normal;
+}
+
+.article-content h3 {
+    font-size: 20px;
+    font-weight: normal;
+}
+
+/* Verberg scrollbalken in de article-content */
+.article-content::-webkit-scrollbar {
+    display: none; /* Verberg scrollbar */
+}
+
+/* Style voor email en Instagram links */
+.article-content a {
+    color: #111; /* Standaard linkkleur */
+    text-decoration: none; /* Verwijder onderlijning */
+    display: inline-flex; /* Voor juiste uitlijning van tekst en iconen */
+    align-items: center; /* Centreer tekst en iconen verticaal */
+}
+
+/* Stijl voor email link */
+.article-content a:hover[href^="mailto:"] {
+    color: rgb(218, 218, 218); /* Kleurverandering bij hover */
+}
+
+/* Stijl voor Instagram link */
+.article-content a:hover[href^="https://www.instagram.com/"] {
+    color: rgb(218, 218, 218); /* Kleurverandering bij hover */
+}
+
+/* Contact sectie stijlen */
+.contact-link {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 16px;
+    color: #111; /* Standaard kleur voor contact tekst */
+    text-decoration: none;
+}
+
+.contact-link a:hover {
+    color: rgb(218, 218, 218); /* Zelfde hover-kleur als de andere links */
+}
+
+.contact-link img {
+    width: 24px; /* Pas grootte aan indien nodig */
+    height: 24px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.contact-text {
+    font-size: 16px;
+    color: #111;
+}
+
+.contact-text a {
+    text-decoration: none; /* Verwijder onderlijning van links */
+    color: #111; /* Linkkleur */
+}
+
+.contact-section {
+    padding: 1rem;
+    background-color: #fefefe; /* Lichte achtergrond voor contactsectie */
+    border-radius: 8px; /* Afgeronde hoeken voor een zachtere look */
+}
+
+
+/* Footer styling */
+footer {
+    background-color: #fff;
+    color: #111;
+    text-align: center;
+    font-size: 10px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-height: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 -0px 0px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    margin: 0;
+    padding: 0;
+}
