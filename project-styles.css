@@ -34,21 +34,31 @@
         height: 100vh;
     }
 
+    .header-content {
+        display: flex;
+        align-items: center; /* Centreer de inhoud horizontaal */
+        text-align: center; /* Centreer de tekst */
+        padding: 1rem;
+    }
+
     nav a {
-        font-size: 12px !important;
+        font-size: 14px !important;
     }
 
     nav ul {
         display: flex;
-        justify-content: center; /* Centreer de navigatie-items in de header */
-        align-items: center; /* Verticale uitlijning */
+        justify-content: center; /* Centreer de navigatie-items */
+        align-items: center; /* Verticaal uitlijnen */
+        flex-wrap: wrap; /* Laat navigatie-items op een nieuwe regel springen indien nodig */
         width: 100%;
         padding: 0;
         margin: 0;
+        list-style: none; /* Verwijder standaard opsommingstekens */
     }
 
     nav ul li {
-        margin: 0 1rem; /* Ruimte tussen de navigatie-items */
+        margin: 0.5rem 1rem; /* Voeg ruimte toe tussen navigatie-items */
+        white-space: nowrap; /* Voorkom dat lange teksten worden afgebroken */
     }
 
     /* Verberg de titel in de header op mobiel */
