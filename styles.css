@@ -41,7 +41,7 @@
     nav a {
         font-size: 12px !important;
     }
-
+    
     nav ul {
         display: flex;
         justify-content: center; /* Centreer de navigatie-items */
@@ -52,10 +52,11 @@
         margin: 0;
         list-style: none; /* Verwijder standaard opsommingstekens */
     }
-
-nav ul li {
-    white-space: nowrap; /* Voorkom dat lange teksten worden afgebroken */
-}
+    
+    nav ul li {
+        margin: 0.5rem 1rem; /* Voeg ruimte toe tussen navigatie-items */
+        white-space: nowrap; /* Voorkom dat lange teksten worden afgebroken */
+    }
 
 
     /* Verberg de titel in de header op mobiel */
