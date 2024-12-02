@@ -13,6 +13,95 @@
     font-style: normal;
 }
 
+/* Media query voor mobiele schermen */
+@media (max-width: 768px) {
+    .container {
+        display: flex;
+        flex-direction: row; /* Horizontaal swipen */
+        overflow-x: auto; /* Scrollen horizontaal */
+        overflow-y: hidden; /* Verberg verticale scrollbalken voor container */
+        width: 100vw;
+        height: 100vh;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Verberg scrollbar in Firefox */
+    }
+
+    /* Kolommen krijgen een breedte van 100vw (de volledige schermbreedte) */
+    .column {
+        width: 100vw;
+        scroll-snap-align: center;
+        height: 100vh;
+    }
+
+    nav a {
+        font-size: 16px !important;
+    }
+
+    nav ul {
+        display: flex;
+        justify-content: center; /* Centreer de navigatie-items in de header */
+        align-items: center; /* Verticale uitlijning */
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    nav ul li {
+        margin: 0 2rem; /* Ruimte tussen de navigatie-items */
+    }
+
+    /* Verberg de titel in de header op mobiel */
+    .title {
+        display: none; /* Verberg de titel in de header voor mobiel */
+    }
+
+    /* Zorg ervoor dat de header de titel en navigatie goed positioneert */
+    .header-content {
+        display: flex;
+        justify-content: center; /* Zorg dat de inhoud van de header gecentreerd blijft */
+        align-items: center; /* Verticaal centreren */
+        width: 100%;
+        padding: 1rem; /* Voeg wat ruimte toe voor de header */
+    }
+
+    /* Werk link altijd zichtbaar maken op mobiel */
+    #werk-link {
+        display: inline-block !important; /* Verzeker dat de "Werk" link zichtbaar is */
+    }
+
+
+    /* Toon telefoonlink en verberg statisch nummer op mobiel */
+    .contact-link .phone-number {
+        display: none !important; /* Verberg statisch telefoonnummer op mobiel */
+    }
+
+    .contact-link .phone-link {
+        display: inline !important; /* Toon klikbare telefoonlink op mobiel */
+    }
+}
+
+/* Verberg de "Werk" link standaard op desktop */
+#werk-link {
+    display: none; /* Verberg de "Werk" link op desktop */
+}
+
+/* Toon statisch telefoonnummer op desktop en verberg klikbare link */
+.contact-link .phone-number {
+    display: inline; /* Toon statisch telefoonnummer op desktop */
+}
+
+.contact-link .phone-link {
+    display: none; /* Verberg klikbare telefoonlink op desktop */
+}
+
+
+/* Algemene instellingen om scrollbalken te verbergen op specifieke kolommen */
+html, body {
+    height: 100%; /* Zorg ervoor dat de body de volledige hoogte van het scherm heeft */
+    overflow: visible; /* Sta scrollen toe voor de pagina */
+}
+
 /* General body styling */
 body {
     font-family: 'AvenirNextRegular', Arial, sans-serif;
@@ -64,24 +153,24 @@ nav ul {
 }
 
 nav ul li {
-    margin-left: 1rem;
+    margin-left: 2rem;
 }
 
 nav a {
     text-decoration: none;
-    color: #111; /* Default color for nav links */
+    color: #111;
     font-size: 18px;
-    transition: color 0.5s ease; /* Smooth color transition */
+    transition: color 0.5s ease;
 }
 
 nav a:hover {
-    color: rgb(218, 218, 218); /* Color change on hover */
+    color: rgb(218, 218, 218);
 }
 
-/* Container styles */
+/* Standaard container stijl voor grotere schermen */
 .container {
     display: grid;
-    grid-template-columns: 2fr 3fr 2fr;
+    grid-template-columns: 2fr 3fr 2fr; /* Normale gridindeling voor grotere schermen */
     gap: 1rem;
     padding: 2rem;
     height: calc(100vh - 3rem);
@@ -89,6 +178,7 @@ nav a:hover {
     padding-top: 3rem;
 }
 
+/* Kolommen voor grotere schermen */
 .column {
     padding: 1rem;
     background-color: #fff;
@@ -97,6 +187,8 @@ nav a:hover {
     overflow: hidden;
 }
 
+
+/* Kolomtitel (geen scrollbalk) */
 .column-title {
     padding-top: 0rem;
     grid-column: 1;
@@ -118,6 +210,7 @@ nav a:hover {
     white-space: nowrap;
     transform: translateX(0);
     position: absolute;
+    cursor: none;
     top: -220px;
 }
 
@@ -125,17 +218,175 @@ nav a:hover {
     transform: translateX(-90%);
 }
 
-.title-content {
-    display: inline-block;
-    font-family: 'DINBold', Arial, sans-serif;
-    font-size: 383px;
-    font-weight: normal;
-    line-height: 0;
-    transition: transform 8s ease;
-    white-space: nowrap;
-    transform: translateX(0);
+/* Column photos styles */
+.column-photos {
+    grid-column: 2;
+    background-color: #fff;
+    padding: 0;
+    height: calc(100vh - 4rem); /* Geeft de galerij de hoogte van het scherm */
+    box-sizing: border-box;
+    overflow-y: auto; /* Zorg ervoor dat we verticaal kunnen scrollen */
+    -webkit-overflow-scrolling: touch; /* Verbeteren van scrollen op iOS */
+    scrollbar-width: none; /* Verberg scrollbalk in Firefox */
+    -ms-overflow-style: none; /* Verberg scrollbar in IE */
+}
+
+.column-photos::-webkit-scrollbar {
+    display: none; /* Verberg scrollbalk in Chrome */
+}
+
+/* Afbeeldingscontainer */
+.image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.image-container a {
+    width: 100%;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.image-container img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    transition: transform 0.5s ease;
+}
+
+.image-container img:hover {
+    transform: scale(1.05);
+}
+
+/* Empty column styles */
+.column-empty {
+    grid-column: 3;
+    background-color: #fff;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.default-content {
     position: absolute;
-    top: -220px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+    transition: opacity 1s ease;
+    pointer-events: none; /* zorgt ervoor dat de inhoud erachter klikbaar blijft */
+}
+
+/* Verberg scrollbalken in de artikelinhoud voor zowel desktop als mobiel */
+.article-content {
+    opacity: 0;
+    padding: 1rem;
+    font-size: 16px;
+    transition: opacity 1s ease-in;
+    max-height: 100%;
+    overflow: hidden;  /* Verbergt zowel horizontale als verticale scrollbars */
+    padding-right: 1rem;  /* Zorgt ervoor dat de inhoud niet aan de rechterkant tegen de rand zit */
+    -ms-overflow-style: none; /* Verberg scrollbar in IE */
+    scrollbar-width: none; /* Verbergt de scrollbar in Firefox */
+}
+
+/* Verberg scrollbalken in de artikelinhoud voor alle browsers */
+.article-content::-webkit-scrollbar {
+    display: none; /* Verberg scrollbar in Webkit-browsers zoals Chrome/Safari */
+}
+
+.article-content img.article-image {
+    display: block;
+    max-width: 100%;
+    height: auto; /* Zorgt ervoor dat de hoogte automatisch wordt aangepast */
+    margin: 1rem 0; /* Optioneel: ruimte boven en onder de afbeelding */
+}
+
+/* Styling voor H2 in article-content */
+.article-content h2 {
+    font-size: 24px;
+    font-weight: normal;
+}
+
+.article-content h3 {
+    font-size: 20px;
+    font-weight: normal;
+}
+
+/* Style voor email en Instagram links */
+.article-content a {
+    color: #111; /* Standaard linkkleur */
+    text-decoration: none; /* Verwijder onderlijning */
+    display: inline-flex; /* Voor juiste uitlijning van tekst en iconen */
+    align-items: center; /* Centreer tekst en iconen verticaal */
+}
+
+/* Stijl voor email link */
+.article-content a:hover[href^="mailto:"] {
+    color: rgb(218, 218, 218); /* Kleurverandering bij hover */
+}
+
+/* Stijl voor Instagram link */
+.article-content a:hover[href^="https://www.instagram.com/"] {
+    color: rgb(218, 218, 218); /* Kleurverandering bij hover */
+}
+
+/* Contact sectie stijlen */
+.contact-link {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 16px;
+    color: #111; /* Standaard kleur voor contact tekst */
+    text-decoration: none;
+}
+
+.contact-link a:hover {
+    color: rgb(218, 218, 218); /* Zelfde hover-kleur als de andere links */
+}
+
+.contact-link img {
+    width: 24px; /* Pas grootte aan indien nodig */
+    height: 24px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.contact-text {
+    font-size: 16px;
+    color: #111;
+}
+
+.contact-text a {
+    text-decoration: none; /* Verwijder onderlijning van links */
+    color: #111; /* Linkkleur */
+}
+
+.contact-section {
+    padding: 1rem;
+    background-color: #fefefe; /* Lichte achtergrond voor contactsectie */
+    border-radius: 8px; /* Afgeronde hoeken voor een zachtere look */
+}
+
+/* Footer styling */
+footer {
+    background-color: #fff;
+    color: #111;
+    text-align: center;
+    font-size: 10px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-height: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* 
@@ -207,193 +458,4 @@ nav a:hover {
 
 .title-content--four-lines p {
     margin: 0;
-}
-
-/* Column photos styles */
-.column-photos {
-    grid-column: 2;
-    background-color: #fff;
-    /* deze flexbox regels hieronder heb ik uitgezet voor de huidige weergave van foto's haalt een flexbox niets uit, maar kan wel handig wezen voor ruimte tussen de foto's middels gap (bijv collumn-gap: 1rem, row-gap: 1rem of voor beide gap: 1rem) */
-    /* display: flex; */
-    /* justify-content: center;  */
-    padding: 0;
-    height: calc(100vh - 4rem);
-    box-sizing: border-box;
-    overflow: auto;
-}
-
-/* Hide scrollbar in all browsers */
-.column-photos::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-}
-
-.column-photos::-webkit-scrollbar-thumb {
-    background: transparent;
-}
-
-.column-photos::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.column-photos {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-
-.image-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    padding: 1rem;
-    box-sizing: border-box;
-}
-
-.image-container a {
-    width: 100%;
-    display: block;
-    margin-bottom: 1rem;
-}
-
-.image-container img {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.image-container img:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0px 0px #111;
-}
-
-/* Empty column styles */
-.column-empty {
-    grid-column: 3;
-    background-color: #fff;
-    height: 100%;
-    overflow: hidden;
-    position: relative;
-}
-
-.default-content {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 1;
-    transition: opacity 1s ease;
-    pointer-events: none; /* zorgt ervoor dat de inhoud erachter klikbaar blijft */
-}
-
-.article-content {
-    opacity: 0;
-    padding: 1rem;
-    font-size: 16px;
-    transition: opacity 1s ease-in;
-    max-height: 100%;
-    overflow-y: auto;
-    padding-right: 1rem;
-}
-
-.article-content img.article-image {
-    display: block;
-    max-width: 100%;
-    height: auto; /* Zorgt ervoor dat de hoogte automatisch wordt aangepast */
-    margin: 1rem 0; /* Optioneel: ruimte boven en onder de afbeelding */
-}
-
-
-/* Styling voor H2 in article-content */
-.article-content h2 {
-    font-size: 24px;
-    font-weight: normal;
-}
-
-.article-content h3 {
-    font-size: 20px;
-    font-weight: normal;
-}
-
-/* Verberg scrollbalken in de article-content */
-.article-content::-webkit-scrollbar {
-    display: none; /* Verberg scrollbar */
-}
-
-/* Style voor email en Instagram links */
-.article-content a {
-    color: #111; /* Standaard linkkleur */
-    text-decoration: none; /* Verwijder onderlijning */
-    display: inline-flex; /* Voor juiste uitlijning van tekst en iconen */
-    align-items: center; /* Centreer tekst en iconen verticaal */
-}
-
-/* Stijl voor email link */
-.article-content a:hover[href^="mailto:"] {
-    color: rgb(218, 218, 218); /* Kleurverandering bij hover */
-}
-
-/* Stijl voor Instagram link */
-.article-content a:hover[href^="https://www.instagram.com/"] {
-    color: rgb(218, 218, 218); /* Kleurverandering bij hover */
-}
-
-/* Contact sectie stijlen */
-.contact-link {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1rem;
-    font-size: 16px;
-    color: #111; /* Standaard kleur voor contact tekst */
-    text-decoration: none;
-}
-
-.contact-link a:hover {
-    color: rgb(218, 218, 218); /* Zelfde hover-kleur als de andere links */
-}
-
-.contact-link img {
-    width: 24px; /* Pas grootte aan indien nodig */
-    height: 24px;
-    margin-right: 8px;
-    vertical-align: middle;
-}
-
-.contact-text {
-    font-size: 16px;
-    color: #111;
-}
-
-.contact-text a {
-    text-decoration: none; /* Verwijder onderlijning van links */
-    color: #111; /* Linkkleur */
-}
-
-.contact-section {
-    padding: 1rem;
-    background-color: #fefefe; /* Lichte achtergrond voor contactsectie */
-    border-radius: 8px; /* Afgeronde hoeken voor een zachtere look */
-}
-
-
-/* Footer styling */
-footer {
-    background-color: #fff;
-    color: #111;
-    text-align: center;
-    font-size: 10px;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    max-height: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 -0px 0px rgba(0, 0, 0, 0.1);
-    z-index: 1;
-    margin: 0;
-    padding: 0;
 }

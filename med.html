@@ -3,22 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FAS - Medisch RISO</title>
+    <title>Franco Soolsma | Medisch RISO</title>
+    <link rel="icon" href="Links/favicon.png" type="favicon.png">
     <link rel="stylesheet" href="project-styles.css">
 </head>
 <body>
     <header>
         <div class="header-content">
-            <span class="title" id="project-title">Medisch Riso</span>
+            <span class="title" id="project-title">Medisch RISO</span>
             <nav>
                 <ul>
-                    <li><a href="index.html">Home</a></li> <!-- Zorg ervoor dat index.html correct is -->
-                    <li><a href="#" data-section="project-info">Project Info</a></li>
+                    <li><a href="index.html">Home</a></li>
+                    <li id="werk-link"><a href="#" data-section="work">Project</a></li> <!-- Alleen zichtbaar op mobiel -->
+                    <li><a href="#" data-section="project-info">Info</a></li>
                 </ul>
                 <button class="nav-close-btn" style="display: none;">Close</button>
             </nav>
         </div>
     </header>
+
     <div class="container">
         <div class="column column-title">
             <div class="title-content title-content--two-lines">
@@ -26,6 +29,7 @@
                 <p>RISO</p>
             </div>
         </div>
+
         <div class="column column-photos">
             <div class="image-container">
                 <img src="Links/Beeld/Medisch_6.jpg" alt="Image 1" data-expand="true">
@@ -61,62 +65,96 @@
     </footer>
 
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const columnPhotos = document.querySelector('.column-photos');
-        const columnInfo = document.querySelector('.column-info');
-        const images = document.querySelectorAll('.column-photos img');
-        const navCloseBtn = document.querySelector('.nav-close-btn');
+        document.addEventListener('DOMContentLoaded', () => {
+    const columnPhotos = document.querySelector('.column-photos');
+    const columnInfo = document.querySelector('.column-info');
+    const images = document.querySelectorAll('.column-photos img');
+    const navCloseBtn = document.querySelector('.nav-close-btn');
+    const articleContent = document.querySelector('.article-content');
+    const defaultContent = document.querySelector('.default-content');
 
-        // Handle navigation click events
-        document.querySelectorAll('nav a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                if (link.getAttribute('href') === 'index.html') {
-                    // Allow default behavior for Home link
-                    return;
-                }
-                e.preventDefault(); // Prevent default behavior for other links
-                const section = link.getAttribute('data-section');
+    // Functie om te checken of we op mobiel zitten
+    const isMobile = window.innerWidth < 768; // Stel in op je gewenste mobiel breakpoint
 
-                if (section === 'project-info') {
-                    columnInfo.classList.add('show');
-                    columnPhotos.classList.remove('expanded');
-                    document.querySelector('.article-content').style.opacity = 1;
-                    document.querySelector('.default-content').style.opacity = 0;
-                } else {
-                    columnInfo.classList.remove('show');
-                    columnPhotos.classList.remove('expanded');
-                    document.querySelector('.article-content').style.opacity = 0;
-                    document.querySelector('.default-content').style.opacity = 1;
-                }
-            });
+    // Handle navigation click events (originele functionaliteit)
+    document.querySelectorAll('nav a').forEach(link => {
+        link.addEventListener('click', (e) => {
+            // Zorg ervoor dat de Home-link de standaardactie behoudt
+            if (link.getAttribute('href') === 'index.html') {
+                return;  // Geen preventDefault voor de Home-link
+            }
+            
+            e.preventDefault(); // Prevent default behavior voor andere links
+            const section = link.getAttribute('data-section');
+
+            if (section === 'project-info') {
+                // Toggle zichtbaarheid van de project-info sectie
+                columnInfo.classList.add('show');
+                columnPhotos.classList.remove('expanded');
+                document.querySelector('.article-content').style.opacity = 1;
+                document.querySelector('.default-content').style.opacity = 0;
+            } else {
+                columnInfo.classList.remove('show');
+                columnPhotos.classList.remove('expanded');
+                document.querySelector('.article-content').style.opacity = 0;
+                document.querySelector('.default-content').style.opacity = 1;
+            }
         });
+    });
 
-        // Handle image click events
-        images.forEach(image => {
-            image.addEventListener('click', (e) => {
-                e.stopPropagation(); // Prevent the click event from bubbling up
+    // Voeg swipe-functionaliteit toe voor mobiel
+    document.querySelectorAll('nav a').forEach(link => {
+        link.addEventListener('click', (e) => {
+            // Zorg ervoor dat de Home-link de standaardactie behoudt
+            if (link.getAttribute('href') === 'index.html') {
+                return;  // Geen preventDefault voor de Home-link
+            }
+
+            e.preventDefault(); // voorkom standaardactie van de link
+            const section = link.getAttribute('data-section');
+
+            if (section === 'work') {
+                // Scroll naar de werk-sectie (afbeeldingen)
+                columnPhotos.classList.add('show');
+                columnInfo.classList.remove('show');
+                columnPhotos.scrollIntoView({ behavior: 'smooth' });
+            } else if (section === 'project-info') {
+                // Scroll naar de info-sectie
+                columnInfo.classList.add('show');
+                columnPhotos.classList.remove('show');
+                columnInfo.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+
+    // Handle image click events (voor de 'expanded' view)
+    images.forEach(image => {
+        image.addEventListener('click', (e) => {
+            // Alleen de uitvergroten functionaliteit voor niet-mobiele apparaten
+            if (!isMobile) {
+                e.stopPropagation(); // Stop event bubbling
                 columnPhotos.classList.add('expanded');
                 columnInfo.classList.add('expanded');
                 navCloseBtn.style.display = 'block'; // Show the close button
-            });
-        });
-
-        // Handle click to collapse the expanded state when clicking outside the image container
-        document.addEventListener('click', (e) => {
-            if (!columnPhotos.contains(e.target) && !columnInfo.contains(e.target) && !navCloseBtn.contains(e.target)) {
-                columnPhotos.classList.remove('expanded');
-                columnInfo.classList.remove('expanded');
-                navCloseBtn.style.display = 'none'; // Hide the close button
             }
         });
+    });
 
-        // Handle close button click in the nav
-        navCloseBtn.addEventListener('click', () => {
+    // Close button om de 'expanded' view te sluiten
+    document.addEventListener('click', (e) => {
+        if (!columnPhotos.contains(e.target) && !columnInfo.contains(e.target) && !navCloseBtn.contains(e.target)) {
             columnPhotos.classList.remove('expanded');
             columnInfo.classList.remove('expanded');
             navCloseBtn.style.display = 'none'; // Hide the close button
-        });
+        }
     });
+
+    navCloseBtn.addEventListener('click', () => {
+        columnPhotos.classList.remove('expanded');
+        columnInfo.classList.remove('expanded');
+        navCloseBtn.style.display = 'none'; // Hide the close button
+    });
+}); 
     </script>
 </body>
 </html>

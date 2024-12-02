@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Franco Soolsma | Grafisch Ontwerp</title>
+    <link rel="icon" href="Links/favicon.png" type="favicon.png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a class="title" id="portfolio-title">Franco Soolsma | Grafisch Ontwerp</a>
+            <nav>
+                <ul>
+                    <li id="werk-link"><a href="#" data-section="work">Werk</a></li> <!-- Alleen zichtbaar op mobiel -->
+                    <li><a href="#" data-section="about">FAS</a></li>
+                    <li><a href="#" data-section="experience">Ervaring</a></li>
+                    <li><a href="#" data-section="contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <div class="column column-title">
+            <div class="title-content title-content--two-lines">
+                <p>Franco Soolsma</p>
+                <p>Grafisch Ontwerp</p>
+            </div>
+        </div>
+        <div class="column column-photos">
+            <div class="image-container">
+                <!-- Image Links -->
+                <a href="adam.html"><img src="Links/Typografie/adam/Woordenboek_1.jpg" alt="Amsterdams Woordenboekkie"></a>
+                <a href="bed.html"><img src="Links/Bed/CloseUp.jpg" alt="Ver van m'n bed"></a>
+                <a href="wall.html"><img src="Links/AR/Smoking.jpg" alt="A Wall"></a>
+                <a href="lood.html"><img src="Links/Typografie/lood/Lood_2.jpg" alt="Lood"></a>
+                <a href="opa.html"><img src="Links/Beeld/Opa_2.jpg" alt="Opa"></a>
+                <a href="med.html"><img src="Links/Beeld/Medisch_6.jpg" alt="Medisch"></a>
+                <a href="sonic.html"><img src="Links/Typografie/sonic/Interview_1.jpg" alt="Sonic"></a>
+                <a href="posters.html"><img src="Links/Beeld/Drol.jpg" alt="Image 1" data-expand="true"></a>
+                <a href="misanthrope.html"><img src="Links/Misanthrope/mis0.jpg" alt="Misanthrope"></a>
+                <a href="boek.html"><img src="Links/Typografie/boek/Boek_3.jpg" alt="Boek"></a>
+                <a href="muziek.html"><img src="Links/Muziek/Cover.jpg" alt="Muziek"></a>
+                <a href="deadsouls.html"><img src="Links/Deadsouls/Logo.jpg" alt="Deadsouls"></a>
+                <a href="illustratie.html"><img src="Links/Illustratie/page1.jpg" alt="Illustratie"></a>
+                <a href="game.html"><img src="Links/Game/1.jpg" alt="Game"></a>
+                <a href="https://youtu.be/ApDGfjdOeAY" target="_blank"><img src="Links/Video/day24.png" alt="Day24"></a>
+                <a href="https://youtu.be/NLuorn0jE54" target="_blank"><img src="Links/Video/kane.png" alt="Kane"></a>
+                <a href="https://youtu.be/PJdVZRmEA48" target="_blank"><img src="Links/Video/shotgun.png" alt="Shotgun"></a>
+                <a href="alfa.html"><img src="Links/Typografie/alfa/Underground.jpg" alt="Alfabet"></a>
+            </div>
+        </div>
+        <div class="column column-empty" id="article-column">
+            <div class="default-content">
+                <!-- Default content hier -->
+            </div>
+            <div class="article-content">
+                <!-- Artikel content wordt hier geïnjecteerd -->
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2024 Portfolio Franco A. Soolsma. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('nav a').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const section = link.getAttribute('data-section');
+                    const articleContent = document.querySelector('.column-empty .article-content');
+                    const defaultContent = document.querySelector('.column-empty .default-content');
+                    const articleColumn = document.getElementById('article-column');
+                    const photoColumn = document.querySelector('.column-photos'); // Het werk-sectie met de afbeeldingen
+
+                    articleContent.style.opacity = 0;
+
+                    if (section === 'work') {
+                        // Scroll naar de tweede kolom (werk)
+                        photoColumn.scrollIntoView({ behavior: 'smooth' });
+                    } else if (section === 'about') {
+                        defaultContent.style.opacity = 0;
+                        setTimeout(() => {
+                            articleContent.innerHTML = `
+                                <h2>FAS</h2>
+                                <p>Franco A. Soolsma - Graphic Design student, HKU.</p>
+                               <p>De vrijheid om mijzelf uit te mogen spreken, provoceren of bespotten, 
+                                   kritiek en humor zijn belangrijk in mijn werk. Onderzoekend ga ik te werk, 
+                                   zo hoop ik meer diepgang te krijgen in een onderwerp dat mij interesseert of wordt voorgedragen.
+                                </p>
+                                <img src="Links/about/me.jpg" alt="About Me" class="article-image">
+                            `;
+                            articleContent.style.opacity = 1;
+                            articleContent.style.overflowY = 'scroll'; 
+                            articleColumn.scrollIntoView({ behavior: 'smooth' }); // Scroll naar de kolom
+                        });
+                    } else if (section === 'contact') {
+                        defaultContent.style.opacity = 0;
+                        setTimeout(() => {
+                            articleContent.innerHTML = `
+                            <h2>Contact</h2>
+                            <div class="contact-section">
+                                <p class="contact-link">
+                                    <img src="Links/Icons/email-icon.svg" alt="Email Icon" class="icon">
+                                    <a href="mailto:francosoolsma@gmail.com">francosoolsma@gmail.com</a>
+                                </p>
+
+                                <p class="contact-link">
+                                    <img src="Links/Icons/phone-icon.svg" alt="Phone Icon" class="icon">
+                                    <span class="phone-number">06 38054949</span>
+                                    <a href="tel:+31638054949" class="phone-link">06 38054949</a>
+                                </p>
+
+                                <p class="contact-link">
+                                    <img src="Links/Icons/instagram-icon.svg" alt="Instagram Icon" class="icon">
+                                    <a href="https://www.instagram.com/franco.a.s______/?next=%2Ffas.music.design%2F" target="_blank">@franco.a.s______</a>
+                                </p>
+                            </div>
+                            `;
+                            articleContent.style.opacity = 1;
+                            articleContent.style.overflowY = 'auto'; 
+                            articleColumn.scrollIntoView({ behavior: 'smooth' });
+                        });
+                    } else if (section === 'experience') { 
+                        defaultContent.style.opacity = 0;
+                        setTimeout(() => {
+                            articleContent.innerHTML = `
+                                <h2>Ervaring</h2>
+                                <h3>Opleiding</h3>
+                                <p> (Hbo) Graphic Design<br>
+                                    September 2022 - Heden <br>
+                                    Hku, Utrecht </p>
+
+                                <p> Propedeuse <br>
+                                    Juli 2023 <br>
+                                    Hku, Utrecht </p>
+
+                                <p> (Mbo 4) Media Vormgever <br>
+                                    2017 - 2021 <br>
+                                    Media College, Amsterdam </p>
+
+                                <p> (Mbo 2) DTP <br>
+                                    2015 - 2017 <br>
+                                    Media College, Amsterdam </p>
+                                    <br>
+
+                                <h3>Stage</h3>
+                                    <p> (Full-Time) Lead Graphic Designer <br>
+                                    Januari 2020 - Juli 2020 <br>
+                                    Q-Factory, Amsterdam </p>
+
+                                <p> (Full-Time) Graphic Designer
+                                    September 2019 - Januari 2020
+                                    Mnky-Media, Amsterdam </p>
+                                    <br>
+
+                                <h3> Passie </h3>
+                                   <p> Schrijver/Frontman <br>
+                                    Alternative Rock <br>
+                                    Atom </p>
+
+                                <p class="contact-link">
+                                        <img src="Links/Icons/instagram-icon.svg" alt="Instagram Icon" class="icon">
+                                        <a href="https://www.instagram.com/atom.band/" target="_blank">@atom.band</a>
+                                </p>
+                                <br>
+
+                                <h3>Curriculum Vitae</h3>
+                                <p class="contact-link">
+                                <a href="Links/PDF/cv.pdf" download>Download</a>
+                                </p>
+                                <br>
+                            `;
+                            articleContent.style.opacity = 1;
+                            articleContent.style.overflowY = 'auto'; 
+                            articleColumn.scrollIntoView({ behavior: 'smooth' });
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
