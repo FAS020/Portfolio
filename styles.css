@@ -35,9 +35,7 @@
     }
 
     .header-content {
-        display: flex;
-        align-items: center; /* Centreer de inhoud horizontaal */
-        text-align: center; /* Centreer de tekst */
+        align: center; /* Centreer de inhoud horizontaal */
     }
 
     nav a {
