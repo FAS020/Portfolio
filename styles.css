@@ -48,7 +48,7 @@
     }
 
     nav ul li {
-        margin: 0 2rem; /* Ruimte tussen de navigatie-items */
+        margin: 0 1rem; /* Ruimte tussen de navigatie-items */
     }
 
     /* Verberg de titel in de header op mobiel */
