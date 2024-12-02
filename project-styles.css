@@ -35,15 +35,13 @@
     }
 
     .header-content {
-        display: flex;
-        align-items: center; /* Centreer de inhoud horizontaal */
-        text-align: center; /* Centreer de tekst */
+       align:center;
     }
 
     nav a {
         font-size: 14px !important;
     }
-
+    
     nav ul {
         display: flex;
         justify-content: center; /* Centreer de navigatie-items */
@@ -54,8 +52,9 @@
         margin: 0;
         list-style: none; /* Verwijder standaard opsommingstekens */
     }
-
+    
     nav ul li {
+        margin: 0.5rem 1rem; /* Voeg ruimte toe tussen navigatie-items */
         white-space: nowrap; /* Voorkom dat lange teksten worden afgebroken */
     }
 
