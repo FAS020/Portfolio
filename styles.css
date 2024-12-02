@@ -34,6 +34,13 @@
         height: 100vh;
     }
 
+    .header-content {
+        display: flex;
+        align-items: center; /* Centreer de inhoud horizontaal */
+        text-align: center; /* Centreer de tekst */
+        padding: 1rem;
+    }
+
     nav a {
         font-size: 12px !important;
     }
