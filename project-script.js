@@ -36,7 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('nav a').forEach(link => {
         link.addEventListener('click', (e) => {
             // Home-link negeren (standaard gedrag)
-            if (link.getAttribute('href') === 'index.html') return;
+            const href = link.getAttribute('href');
+            if (href === 'index.html' || href === 'home' || href === '/') return;
 
             e.preventDefault();
             const section = link.getAttribute('data-section');
