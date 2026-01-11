@@ -45,7 +45,7 @@
     
     nav ul {
         display: flex;
-        justify-content: center; /* Centreer de navigatie-items */
+        justify-content: center !important; /* Centreer de navigatie-items */
         align-items: center; /* Verticaal uitlijnen */
         flex-wrap: nowrap; /* Laat navigatie-items op een nieuwe regel springen indien nodig */
         width: 100%;
@@ -55,7 +55,7 @@
     }
     
     nav ul li {
-        margin: 0.5rem 0.2rem; /* Voeg ruimte toe tussen navigatie-items */
+        margin: 0.5rem 0.2rem !important; /* Voeg ruimte toe tussen navigatie-items */
         white-space: nowrap; /* Voorkom dat lange teksten worden afgebroken */
     }
 
@@ -67,12 +67,12 @@
     /* Zorg ervoor dat de header de titel en navigatie goed positioneert */
     .header-content {
         display: flex;
-        justify-content: center; /* Zorg dat de inhoud van de header gecentreerd blijft */
+        justify-content: center !important; /* Zorg dat de inhoud van de header gecentreerd blijft */
         align-items: center; /* Verticaal centreren */
         width: 100%;
-        padding: 2.5rem 0.5rem; /* Iets compactere header op mobiel */
+        padding: 2.5rem 0.5rem !important; /* Iets compactere header op mobiel */
         box-sizing: border-box; /* Zorg dat padding binnen de breedte valt */
-        height: auto; /* Laat de hoogte meegroeien met de inhoud */
+        height: auto !important; /* Laat de hoogte meegroeien met de inhoud */
     }
 
     /* Werk link altijd zichtbaar maken op mobiel */
