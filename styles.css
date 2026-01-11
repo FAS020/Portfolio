@@ -52,7 +52,7 @@
     }
     
     nav ul li {
-        margin: 0.5rem 0.5rem; /* Voeg ruimte toe tussen navigatie-items */
+        margin: 0.5rem 0.2rem; /* Voeg ruimte toe tussen navigatie-items */
         white-space: nowrap; /* Voorkom dat lange teksten worden afgebroken */
     }
 
@@ -68,7 +68,7 @@
         justify-content: center; /* Zorg dat de inhoud van de header gecentreerd blijft */
         align-items: center; /* Verticaal centreren */
         width: 100%;
-        padding: 1.5rem 0.5rem; /* Iets compactere header op mobiel */
+        padding: 2.5rem 0.5rem; /* Iets compactere header op mobiel */
         box-sizing: border-box; /* Zorg dat padding binnen de breedte valt */
         height: auto; /* Laat de hoogte meegroeien met de inhoud */
     }
@@ -94,11 +94,11 @@
 
     /* Voeg padding toe aan de content zodat deze onder de header start */
     .image-container {
-        padding-top: 6rem !important;
+        padding-top: 8rem !important;
     }
 
     .content-section {
-        padding-top: 6rem !important;
+        padding-top: 8rem !important;
         overflow-x: hidden; /* Voorkom horizontaal scrollen in de 3e kolom */
         scrollbar-width: none !important; /* Verberg scrollbar in Firefox */
         word-wrap: break-word; /* Breek lange woorden af */
@@ -106,7 +106,7 @@
 
     /* Correctie voor de titelkolom op mobiel */
     .column-title {
-        padding-top: 6rem !important; /* Zorg dat de titel onder de header begint */
+        padding-top: 8rem !important; /* Zorg dat de titel onder de header begint */
     }
 
     .title-content {
@@ -123,12 +123,12 @@
 
     /* Zorg dat ook titels met 1 of 2 regels goed passen op mobiel */
     .title-content--one-line {
-        font-size: calc(100dvh - 10rem) !important;
+        font-size: calc(100dvh - 12rem) !important;
         line-height: 1 !important;
     }
 
     .title-content--two-lines {
-        font-size: calc((100dvh - 10rem) / 2) !important;
+        font-size: calc((100dvh - 12rem) / 2) !important;
         line-height: 1 !important;
     }
 }
