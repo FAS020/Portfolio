@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# Zorg dat /home (en /home/) naar index.html verwijst
+RewriteRule ^home/?$ index.html [L]
+
+# Verwijder .html extensie voor andere pagina's (bijv. /gwa -> gwa.html)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([^\.]+)$ $1.html [NC,L]
