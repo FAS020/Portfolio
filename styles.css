@@ -46,13 +46,14 @@
         align-items: center; /* Verticaal uitlijnen */
         flex-wrap: nowrap; /* Laat navigatie-items op een nieuwe regel springen indien nodig */
         width: 100%;
-        padding: 0;
+        padding: 0 !important;
         margin: 0;
         list-style: none; /* Verwijder standaard opsommingstekens */
+        gap: 1rem; /* Gebruik gap voor nette afstand tussen items */
     }
     
     nav ul li {
-        margin: 0.5rem 0.2rem !important; /* Voeg ruimte toe tussen navigatie-items */
+        margin: 0 !important; /* Reset marges, gap regelt de afstand */
         white-space: nowrap; /* Voorkom dat lange teksten worden afgebroken */
     }
 
@@ -68,7 +69,7 @@
         justify-content: center !important; /* Zorg dat de inhoud van de header gecentreerd blijft */
         align-items: center; /* Verticaal centreren */
         width: 100%;
-        padding: 2.5rem 0.5rem !important; /* Iets compactere header op mobiel */
+        padding: 2.5rem 0 !important; /* Verwijder horizontale padding voor volledige breedte */
         box-sizing: border-box; /* Zorg dat padding binnen de breedte valt */
         height: auto !important; /* Laat de hoogte meegroeien met de inhoud */
     }
