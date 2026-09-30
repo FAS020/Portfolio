@@ -71,7 +71,18 @@
     </footer>
 
 <!-- Floating Draggable Video Widget -->
-<div class="floating-widget" id="floating-video-widget">
+<!-- ================================================================
+     FLOATING VIDEO WIDGET
+     ================================================================ -->
+
+<div
+    class="floating-widget"
+    id="floating-video-widget"
+>
+
+    <!-- ============================================================
+         VIDEO WINDOW
+         ============================================================ -->
 
     <div
         class="floating-window"
@@ -79,7 +90,7 @@
         aria-label="Monoprint Workshop Video"
     >
 
-        <!-- Header / drag area -->
+        <!-- HEADER -->
         <div class="floating-header">
 
             <div class="floating-drag-area">
@@ -97,16 +108,17 @@
 
             <div class="floating-controls">
 
-                <!-- Minimaliseren -->
                 <button
                     type="button"
                     class="floating-btn-ctrl floating-btn-close"
                     aria-label="Minimaliseren"
                 >
+
                     <span
                         class="ctrl-icon"
                         aria-hidden="true"
                     ></span>
+
                 </button>
 
             </div>
@@ -114,14 +126,15 @@
         </div>
 
 
-        <!-- Video -->
+        <!-- VIDEO -->
         <div class="floating-video-body">
 
             <!--
-                Shield voorkomt dat de YouTube iframe
-                de drag/resize interactie overneemt.
+                Shield wordt tijdens slepen/resizen
+                boven de YouTube iframe geplaatst.
             -->
             <div class="floating-drag-shield"></div>
+
 
             <iframe
                 src="https://www.youtube.com/embed/jSLAWYlU6s8?rel=0&enablejsapi=1"
@@ -134,13 +147,19 @@
         </div>
 
 
-        <!-- Resize handle bottom-right -->
-        <div class="floating-resize-handle floating-resize-br"></div>
+        <!-- RESIZE HANDLE -->
+        <div
+            class="floating-resize-handle floating-resize-br"
+            aria-hidden="true"
+        ></div>
 
     </div>
 
 
-    <!-- Minimized pill -->
+    <!-- ============================================================
+         MINIMIZED PILL
+         ============================================================ -->
+
     <button
         type="button"
         class="floating-min-pill"
@@ -160,7 +179,10 @@
 </div>
 
 
-<!-- Scripts -->
+<!-- ================================================================
+     SCRIPTS
+     ================================================================ -->
+
 <script src="common.js"></script>
 <script src="project-script.js"></script>
 <script src="floating-widgets.js"></script>
