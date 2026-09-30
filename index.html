@@ -128,91 +128,293 @@
     </footer>
 
     <!-- Floating Draggable Workshop Booking Popup -->
-    <div class="floating-widget" id="floating-booking-widget">
-        <div class="floating-window" role="dialog" aria-label="‘Wat wil jij schreeuwen tegen de wereld?’">
-            <div class="floating-header">
-                <div class="floating-drag-area">
-                    <img src="Links/Icons/speech-zwart.jpg" alt="Icon" class="pill-speech-icon">
-                    <span class="floating-title">‘Wat wil jij schreeuwen tegen de wereld?’</span>
-                </div>
-                <div class="floating-controls">
-                    <button type="button" class="floating-btn-ctrl floating-btn-close" aria-label="Sluiten">
-                        <svg width="12" height="12" viewBox="0 0 12 12"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                    </button>
-                </div>
+<div class="floating-widget" id="floating-booking-widget">
+
+    <div class="floating-window" role="dialog" aria-label="‘Wat wil jij schreeuwen tegen de wereld?’">
+
+        <!-- Header / drag area -->
+        <div class="floating-header">
+
+            <div class="floating-drag-area">
+
+                <img
+                    src="Links/Icons/speech-zwart.jpg"
+                    alt="Icon"
+                    class="pill-speech-icon"
+                >
+
+                <span class="floating-title">
+                    ‘Wat wil jij schreeuwen tegen de wereld?’
+                </span>
+
             </div>
-            <div class="floating-booking-body">
-                <p class="booking-desc">Is een workshop gericht op het behoud van menselijk contact, toegang creeëren tot een expressieve vorm van communicatie en autonomie in tastbaar beeldmaken.</p>
-                <a href="workshop" class="booking-more-info-btn">Meer informatie</a>
 
-                <div class="booking-feedback">
-                    <h5>Aanvraag klaargezet!</h5>
-                    <p class="booking-feedback-summary">Je e-mailprogramma is geopend om de aanvraag te verzenden.</p>
-                    <div class="booking-feedback-actions">
-                        <button type="button" class="booking-feedback-btn booking-copy-btn">Kopieer aanvraagtekst</button>
-                        <button type="button" class="booking-feedback-btn booking-reset-btn">Nieuwe aanvraag</button>
-                    </div>
+            <div class="floating-controls">
+
+                <!-- Minimaliseren -->
+                <button
+                    type="button"
+                    class="floating-btn-ctrl floating-btn-close"
+                    aria-label="Minimaliseren"
+                >
+                    <span
+                        class="ctrl-icon"
+                        aria-hidden="true"
+                    ></span>
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- Booking content -->
+        <div class="floating-booking-body">
+
+            <p class="booking-desc">
+                Is een workshop gericht op het behoud van menselijk contact,
+                toegang creeëren tot een expressieve vorm van communicatie
+                en autonomie in tastbaar beeldmaken.
+            </p>
+
+
+            <a
+                href="workshop"
+                class="booking-more-info-btn"
+            >
+                Meer informatie
+            </a>
+
+
+            <!-- Feedback na aanvraag -->
+            <div class="booking-feedback">
+
+                <h5>
+                    Aanvraag klaargezet!
+                </h5>
+
+                <p class="booking-feedback-summary">
+                    Je e-mailprogramma is geopend om de aanvraag te verzenden.
+                </p>
+
+                <div class="booking-feedback-actions">
+
+                    <button
+                        type="button"
+                        class="booking-feedback-btn booking-copy-btn"
+                    >
+                        Kopieer aanvraagtekst
+                    </button>
+
+                    <button
+                        type="button"
+                        class="booking-feedback-btn booking-reset-btn"
+                    >
+                        Nieuwe aanvraag
+                    </button>
+
                 </div>
 
-                <form class="booking-form">
-                    <div class="booking-form-row">
-                        <div class="booking-form-group">
-                            <label for="booking-name">Naam <span class="req">*</span></label>
-                            <input type="text" id="booking-name" name="name" required placeholder="Je naam">
-                        </div>
-                        <div class="booking-form-group">
-                            <label for="booking-email">E-mail <span class="req">*</span></label>
-                            <input type="email" id="booking-email" name="email" required placeholder="naam@voorbeeld.nl">
-                        </div>
-                    </div>
+            </div>
 
-                    <div class="booking-form-row">
-                        <div class="booking-form-group">
-                            <label for="booking-phone">Telefoonnummer</label>
-                            <input type="tel" id="booking-phone" name="phone" placeholder="06 ...">
-                        </div>
-                        <div class="booking-form-group">
-                            <label for="booking-date">Datum</label>
-                            <input type="text" id="booking-date" name="date" placeholder="Bijv. 15 okt">
-                        </div>
-                    </div>
 
-                    <div class="booking-form-row">
-                        <div class="booking-form-group">
-                            <label for="booking-participants">Aantal deelnemers</label>
-                            <input type="text" id="booking-participants" name="participants" placeholder="Bijv. 12 personen">
-                        </div>
-                        <div class="booking-form-group">
-                            <label for="booking-type">Type groep / context</label>
-                            <select id="booking-type" name="type">
-                                <option value="">Kies type...</option>
-                                <option value="Onderwijs / School">Onderwijs / School</option>
-                                <option value="Culturele instelling">Culturele instelling</option>
-                                <option value="Bedrijf / Teambuilding">Bedrijf / Teambuilding</option>
-                                <option value="Festival / Publieksevenement">Festival / Publieksevenement</option>
-                                <option value="Particulier / Overig">Particulier / Overig</option>
-                            </select>
-                        </div>
-                    </div>
+            <!-- Booking form -->
+            <form class="booking-form">
+
+                <!-- Naam / E-mail -->
+                <div class="booking-form-row">
 
                     <div class="booking-form-group">
-                        <label for="booking-message">Opmerkingen</label>
-                        <textarea id="booking-message" name="message" rows="2" placeholder="Locatie, wensen of vragen..."></textarea>
+
+                        <label for="booking-name">
+                            Naam <span class="req">*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="booking-name"
+                            name="name"
+                            required
+                            placeholder="Je naam"
+                        >
+
                     </div>
 
-                    <button type="submit" class="booking-submit-btn">Verstuur Aanvraag</button>
-                </form>
-            </div>
+
+                    <div class="booking-form-group">
+
+                        <label for="booking-email">
+                            E-mail <span class="req">*</span>
+                        </label>
+
+                        <input
+                            type="email"
+                            id="booking-email"
+                            name="email"
+                            required
+                            placeholder="naam@voorbeeld.nl"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- Telefoon / Datum -->
+                <div class="booking-form-row">
+
+                    <div class="booking-form-group">
+
+                        <label for="booking-phone">
+                            Telefoonnummer
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="booking-phone"
+                            name="phone"
+                            placeholder="06 ..."
+                        >
+
+                    </div>
+
+
+                    <div class="booking-form-group">
+
+                        <label for="booking-date">
+                            Datum
+                        </label>
+
+                        <input
+                            type="text"
+                            id="booking-date"
+                            name="date"
+                            placeholder="Bijv. 15 okt"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- Deelnemers / Type -->
+                <div class="booking-form-row">
+
+                    <div class="booking-form-group">
+
+                        <label for="booking-participants">
+                            Aantal deelnemers
+                        </label>
+
+                        <input
+                            type="text"
+                            id="booking-participants"
+                            name="participants"
+                            placeholder="Bijv. 12 personen"
+                        >
+
+                    </div>
+
+
+                    <div class="booking-form-group">
+
+                        <label for="booking-type">
+                            Type groep / context
+                        </label>
+
+                        <select
+                            id="booking-type"
+                            name="type"
+                        >
+
+                            <option value="">
+                                Kies type...
+                            </option>
+
+                            <option value="Onderwijs / School">
+                                Onderwijs / School
+                            </option>
+
+                            <option value="Culturele instelling">
+                                Culturele instelling
+                            </option>
+
+                            <option value="Bedrijf / Teambuilding">
+                                Bedrijf / Teambuilding
+                            </option>
+
+                            <option value="Festival / Publieksevenement">
+                                Festival / Publieksevenement
+                            </option>
+
+                            <option value="Particulier / Overig">
+                                Particulier / Overig
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Opmerkingen -->
+                <div class="booking-form-group">
+
+                    <label for="booking-message">
+                        Opmerkingen
+                    </label>
+
+                    <textarea
+                        id="booking-message"
+                        name="message"
+                        rows="2"
+                        placeholder="Locatie, wensen of vragen..."
+                    ></textarea>
+
+                </div>
+
+
+                <!-- Submit -->
+                <button
+                    type="submit"
+                    class="booking-submit-btn"
+                >
+                    Verstuur Aanvraag
+                </button>
+
+            </form>
+
         </div>
-        <button type="button" class="floating-min-pill" aria-label="Open workshop boeken popup">
-            <img src="Links/Icons/speech-zwart.jpg" alt="Icon" class="pill-speech-icon">
-            <span class="pill-label">'Wat wil jij schreeuwen tegen de wereld?'</span>
-        </button>
+
     </div>
 
-    <!-- Scripts -->
-    <script src="common.js"></script>
-    <script src="index-script.js"></script>
-    <script src="floating-widgets.js"></script>
+
+    <!-- Minimized pill -->
+    <button
+        type="button"
+        class="floating-min-pill"
+        aria-label="Open workshop boeken popup"
+    >
+
+        <img
+            src="Links/Icons/speech-zwart.jpg"
+            alt="Icon"
+            class="pill-speech-icon"
+        >
+
+        <span class="pill-label">
+            'Wat wil jij schreeuwen tegen de wereld?'
+        </span>
+
+    </button>
+
+</div>
+
+
+<!-- Scripts -->
+<script src="common.js"></script>
+<script src="index-script.js"></script>
+<script src="floating-widgets.js"></script>
 </body>
 </html>
