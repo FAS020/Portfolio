@@ -1,134 +1,80 @@
-<!DOCTYPE html>
-<html lang="nl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Franco Soolsma | Grafisch Ontwerp</title>
-    <meta name="description" content="Portfolio van Franco Soolsma, Grafisch Ontwerp.">
-    <meta property="og:title" content="Franco Soolsma | Grafisch Ontwerp">
-    <meta property="og:description" content="Portfolio van Franco Soolsma, Grafisch Ontwerp.">
-    <meta property="og:image" content="Links/About/me.jpg">
-    <meta property="og:type" content="website">
-    <link rel="icon" href="Links/favicon.png" type="image/png">
-    <link rel="apple-touch-icon" href="Links/favicon.png">
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Franco Soolsma",
-      "jobTitle": "Grafisch Ontwerper",
-      "alumniOf": "HKU",
-      "sameAs": ["https://www.instagram.com/franco.a.s______/"]
+document.addEventListener('DOMContentLoaded', () => {
+    const photoColumn = document.querySelector('.column-photos');
+    
+    // Functie om te checken of we op mobiel zitten
+    const isMobile = () => window.matchMedia('(max-width: 768px)').matches;
+
+    // Functie om de swipe-afstand van de titel dynamisch te berekenen
+    const calculateTitleSlide = () => {
+        if (!isMobile()) return;
+        
+        const titleContent = document.querySelector('.title-content');
+        if (titleContent) {
+            document.fonts.ready.then(() => {
+                const contentWidth = titleContent.scrollWidth;
+                const viewportWidth = window.innerWidth;
+                const slidePercent = (contentWidth / viewportWidth) * 100 + 10;
+                titleContent.style.setProperty('--slide-distance', `-${slidePercent}%`);
+            });
+        }
+    };
+
+    calculateTitleSlide();
+    
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(calculateTitleSlide, 100);
+    });
+
+    // 1. Check of we terugkomen van een project en herstel de positie
+    const savedScrollPos = sessionStorage.getItem('homeScrollPos');
+    if (savedScrollPos) {
+        // Scroll horizontaal naar de werk-kolom (kolom 2)
+        setTimeout(() => {
+            photoColumn.scrollIntoView({ inline: 'center', behavior: 'auto' });
+            
+            // Herstel de verticale scrollpositie
+            photoColumn.scrollTop = savedScrollPos;
+            
+            // Verwijder de opgeslagen positie zodat het niet blijft hangen bij een verse refresh
+            sessionStorage.removeItem('homeScrollPos');
+        }, 50);
     }
-    </script>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <header>
-        <div class="header-content">
-            <a class="title" id="portfolio-title">Franco Soolsma | Grafisch Ontwerp</a>
-            <nav>
-                <ul>
-                    <li id="werk-link"><a href="#" data-section="work">Werk</a></li> <!-- Alleen zichtbaar op mobiel -->
-                    <li><a href="#" data-section="about">FAS</a></li>
-                    <li><a href="#" data-section="experience">Ervaring</a></li>
-                    <li><a href="#" data-section="contact">Contact</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-    <div class="container">
-        <div class="column column-title">
-            <div class="title-content title-content--two-lines slide-long">
-                <p>Franco Soolsma</p>
-                <p>Grafisch Ontwerp</p>
-            </div>
-        </div>
-        <div class="column column-photos">
-            <div class="image-container">
-                <!-- Image Links -->
-                <a href="https://www.youtube.com/watch?v=jSLAWYlU6s8" target="_blank"><img src="Links/Monoprint/video.jpg" alt="Monoprint"></a>
-                <a href="https://monoprint.francosoolsma.nl/" target="_blank"><img src="Links/Monoprint/mono.jpg" alt="Monoprint"></a>
-                <a href="gwa"><img src="Links/GWA/8.jpg" alt="Etsen"></a>
-                <a href="woordenboek"><img src="Links/Typografie/adam/Woordenboek_1.jpg" alt="Amsterdams Woordenboekkie"></a>
-                <a href="bed"><img src="Links/Bed/CloseUp.jpg" alt="Ver van m'n bed"></a>
-                <a href="lood"><img src="Links/Typografie/lood/Lood_2.jpg" alt="Lood"></a>
-               <!-- <a href="opa"><img src="Links/Beeld/Opa_2.jpg" alt="Opa"></a> -->
-                <a href="medisch"><img src="Links/Beeld/Medisch_6.jpg" alt="Medisch" loading="lazy"></a>
-                <a href="interview"><img src="Links/Typografie/sonic/Interview_1.jpg" alt="Sonic" loading="lazy"></a>
-                <a href="typografie"><img src="Links/Typografie/alfa/Underground.jpg" alt="Alfabet" loading="lazy"></a>
-                <a href="beeld"><img src="Links/Beeld/Drol.jpg" alt="Beeld Project" data-expand="true" loading="lazy"></a>
-                <!-- <a href="misanthrope"><img src="Links/Misanthrope/mis0.jpg" alt="Misanthrope"></a> -->
-                <a href="wall"><img src="Links/AR/Smoking.jpg" alt="A Wall" loading="lazy"></a>
-                <a href="formeel"><img src="Links/Typografie/boek/Boek_3.jpg" alt="Boek" loading="lazy"></a>
-                <a href="muziek"><img src="Links/Muziek/Cover.jpg" alt="Muziek" loading="lazy"></a>
-                <!-- <a href="deadsouls"><img src="Links/Deadsouls/Logo.jpg" alt="Deadsouls"></a> -->
-                <a href="illustratie"><img src="Links/Illustratie/page1.jpg" alt="Illustratie" loading="lazy"></a>
-               <!-- <a href="game"><img src="Links/Game/1.jpg" alt="Game"></a> -->
-                <a href="https://youtu.be/ApDGfjdOeAY" target="_blank"><img src="Links/Video/day24.png" alt="Video: Day24" loading="lazy"></a>
-                <a href="https://youtu.be/NLuorn0jE54" target="_blank"><img src="Links/Video/kane.png" alt="Video: Kane animatie" loading="lazy"></a>
-                <a href="https://youtu.be/PJdVZRmEA48" target="_blank"><img src="Links/Video/shotgun.png" alt="Video: Shotgun animatie" loading="lazy"></a>
-            </div>
-        </div>
-        <div class="column column-empty" id="article-column">
-            <!-- Sectie: About (FAS) - Standaard actief -->
-            <div id="section-about" class="content-section active">
-                <h2>FAS</h2>
-                <p>Franco Alessandro Soolsma | Graphic Design</p>
-                <p>Experiment, analoge technieken, tastbaarheid en provocatie staan centraal in mijn werk. Ik werk in verschillende media die zich bewegen tussen illustratie, analoge ambachtelijke technieken, maar ook audiovisueel en digitaal ontwerp.</p> 
-                <p>Ik ben gemotiveerd om een bijdrage te leveren binnen grafische educatie en onderzoek hoe tastbare en reactiegerichte vormen van expressie toegankelijk kunnen worden voor een bredere doelgroep.</p>
-                <img src="Links/About/me.jpg" alt="About Me" class="article-image">
-            </div>
 
-            <!-- Sectie: Experience -->
-            <div id="section-experience" class="content-section">
-                <h2>Ervaring</h2>
-                <h3>Educatie</h3>
-                <p> (Hbo) Graphic Design<br>2022 - 2026 <br>Hku, Utrecht </p>
-                <p> Propedeuse <br>Juli 2023 <br>Hku, Utrecht </p>
-                <p> (Mbo 4) Media Vormgever <br>2017 - 2021 <br>Media College, Amsterdam </p>
-                <p> (Mbo 2) DTP <br>2015 - 2017 <br>Media College, Amsterdam </p>
-                <br>
-                <h3>Stage</h3>
-                <p> (Full-Time) Werkplaatsmedewerker <br>Februari 2025 - Juli 2025 <br>Grafische Werkplaats Amsterdam </p>
-                <p> (Full-Time) Lead Graphic Designer <br>Januari 2020 - Juli 2020 <br>Q-Factory, Amsterdam </p>
-                <br>
-                <h3>Hobby</h3>
-                <p> Schrijver/Frontman <br>Alternative Rock <br>Atom </p>
-                <p class="contact-link"><img src="Links/Icons/instagram-icon.svg" alt="Instagram Icon" class="icon"><a href="https://www.instagram.com/atom.band/" target="_blank">@atom.band</a></p>
-                <br>
-                <h3>Curriculum Vitae</h3>
-                <p class="contact-link"><a href="Links/PDF/cv.pdf" download>Download</a></p>
-                <br>
-            </div>
+    // 2. Sla de scrollpositie op wanneer we op een project klikken
+    document.querySelectorAll('.column-photos a').forEach(link => {
+        link.addEventListener('click', () => {
+            sessionStorage.setItem('homeScrollPos', photoColumn.scrollTop);
+        });
+    });
 
-            <!-- Sectie: Contact -->
-            <div id="section-contact" class="content-section">
-                <h2>Contact</h2>
-                <div class="contact-section">
-                    <p class="contact-link">
-                        <img src="Links/Icons/email-icon.svg" alt="Email Icon" class="icon">
-                        <a href="mailto:francosoolsma@gmail.com">francosoolsma@gmail.com</a>
-                    </p>
-                    <p class="contact-link">
-                        <img src="Links/Icons/phone-icon.svg" alt="Phone Icon" class="icon">
-                        <span class="phone-number">06 38054949</span>
-                        <a href="tel:+31638054949" class="phone-link">06 38054949</a>
-                    </p>
-                    <p class="contact-link">
-                        <img src="Links/Icons/instagram-icon.svg" alt="Instagram Icon" class="icon">
-                        <a href="https://www.instagram.com/franco.a.s______/?next=%2Ffas.music.design%2F" target="_blank">@franco.a.s______</a>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <footer>
-        <p>&copy; 2024 Portfolio Franco A. Soolsma. All rights reserved.</p>
-    </footer>
+    document.querySelectorAll('nav a').forEach(link => {
+        link.addEventListener('click', (e) => {
+            const section = link.getAttribute('data-section');
+            
+            // Als er geen data-section is (bijv. externe links), doe niets
+            if (!section) return;
 
-    <!-- Scripts -->
-    <script src="common.js"></script>
-    <script src="index-script.js"></script>
-</body>
-</html>
+            e.preventDefault();
+            
+            const articleColumn = document.getElementById('article-column');
+
+            if (section === 'work') {
+                photoColumn.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                // Verberg alle secties
+                document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
+                
+                // Toon de geselecteerde sectie
+                const targetId = 'section-' + section;
+                const targetSection = document.getElementById(targetId);
+                
+                if (targetSection) {
+                    targetSection.classList.add('active');
+                    articleColumn.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        });
+    });
+});
