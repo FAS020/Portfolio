@@ -1,13 +1,10 @@
 /* ==========================================================================
-   Floating Widgets
-   - Popup blijft binnen viewport
-   - Geminimaliseerde knop altijd rechtsonder
-   - Geen hover-vlak achter de min/close knop
-   - Video kan alleen naar rechts groter worden
+   Floating Widgets: Draggable Video Tab & Workshop Booking Popup
+   100% Vierkant, 1px lijnen, witte boeker, no-scrollbar, center spawn
    ========================================================================== */
 
 .floating-widget {
-    position: fixed !important;
+    position: fixed;
     z-index: 1200;
     box-sizing: border-box;
     font-family: 'AvenirNextRegular', Arial, sans-serif;
@@ -16,14 +13,13 @@
     user-select: none;
     -webkit-user-select: none;
     touch-action: none;
-
+    /* Spawn gecentreerd op het scherm */
     left: 50%;
     top: 50%;
-    right: auto;
-    bottom: auto;
     transform: translate(-50%, -50%);
 }
 
+/* Floating Window Container - 100% 4kant, 1px lijn */
 .floating-widget .floating-window {
     width: 360px;
     max-width: calc(100vw - 24px);
@@ -35,25 +31,23 @@
     position: relative;
     display: flex;
     flex-direction: column;
-
+    transition: opacity 0.2s ease, transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.2s;
+    transform-origin: center center;
     opacity: 1;
     visibility: visible;
     transform: scale(1);
-    transform-origin: center center;
-    transition:
-        opacity 0.20s ease,
-        transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-        visibility 0.20s;
     pointer-events: auto;
 }
 
+/* Booking popup: iets breder zodat ‘Wat wil jij schreeuwen tegen de wereld?’ op 1 regel past */
 #floating-booking-widget .floating-window {
     width: 440px;
     max-width: calc(100vw - 20px);
+    background: #ffffff;
+    border: 1px solid #000000;
 }
 
-/* Header */
-
+/* Floating Window Header (Drag Handle) */
 .floating-widget .floating-header {
     background: #000000;
     color: #ffffff;
@@ -61,7 +55,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    cursor: grab;
+    cursor: grab; /* Handje bij uitvergrote popup */
     user-select: none;
     touch-action: none;
     border-bottom: 1px solid #000000;
@@ -71,6 +65,28 @@
 .floating-widget .floating-header:active,
 .floating-widget.is-dragging .floating-header {
     cursor: grabbing;
+}
+
+/* Boeker: zwarte titelbalk met witte titel */
+#floating-booking-widget .floating-header {
+    background: #000000;
+    color: #ffffff;
+    border-bottom: 1px solid #000000;
+}
+
+#floating-booking-widget .floating-header .floating-title {
+    color: #ffffff;
+    font-size: 13.5px;
+    letter-spacing: 0.2px;
+}
+
+#floating-booking-widget .floating-header .floating-btn-ctrl {
+    color: #ffffff;
+}
+
+#floating-booking-widget .floating-header .floating-btn-ctrl:hover {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
 }
 
 .floating-widget .floating-drag-area {
@@ -88,16 +104,10 @@
     font-size: 13px;
     letter-spacing: 0.5px;
     text-transform: uppercase;
-    white-space: nowrap;
+    white-space: nowrap; /* Op 1 regel */
     overflow: hidden;
     text-overflow: ellipsis;
     color: #ffffff;
-}
-
-#floating-booking-widget .floating-header .floating-title {
-    color: #ffffff;
-    font-size: 13.5px;
-    letter-spacing: 0.2px;
 }
 
 .floating-widget .floating-controls {
@@ -107,70 +117,31 @@
     flex-shrink: 0;
 }
 
-/* Min/close button: geen achtergrond, ook niet bij hover */
-
 .floating-widget .floating-btn-ctrl {
-    position: relative;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
     width: 24px;
     height: 24px;
-    padding: 0;
-    margin: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
-    background: transparent !important;
-    border: none !important;
     border-radius: 0 !important;
-    color: #ffffff !important;
-    cursor: pointer;
-    box-shadow: none !important;
-    outline: none;
-
-    transition: color 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease;
+    padding: 0;
     touch-action: auto;
 }
 
-.floating-widget .floating-btn-ctrl:hover,
-.floating-widget .floating-btn-ctrl:focus,
+.floating-widget .floating-btn-ctrl:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
 .floating-widget .floating-btn-ctrl:active {
-    background: transparent !important;
-    box-shadow: none !important;
-    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.4);
 }
 
-/* Het bestaande SVG kruisje wordt gebruikt als sluitteken.
-   Voor een simpele '-' wordt de SVG verborgen en tekenen we zelf. */
-
-.floating-widget .floating-btn-ctrl svg {
-    display: none;
-}
-
-.floating-widget .floating-btn-ctrl::before {
-    content: '';
-    width: 11px;
-    height: 2px;
-    background: currentColor;
-    display: block;
-    transition: transform 0.20s ease;
-}
-
-.floating-widget .floating-btn-ctrl:hover::before {
-    transform: rotate(45deg);
-}
-
-.floating-widget .floating-btn-ctrl:hover::after {
-    content: '';
-    position: absolute;
-    width: 11px;
-    height: 2px;
-    background: currentColor;
-    transform: rotate(-45deg);
-    transition: transform 0.20s ease;
-}
-
-/* Video */
-
+/* Video specific body */
 .floating-widget .floating-video-body {
     position: relative;
     width: 100%;
@@ -185,6 +156,7 @@
     display: block;
 }
 
+/* Bottom-right resize handle voor videovenster */
 .floating-resize-br {
     position: absolute;
     bottom: 0;
@@ -209,6 +181,7 @@
     pointer-events: none;
 }
 
+/* Drag shield: covers iframe during dragging & resizing */
 .floating-widget .floating-drag-shield {
     position: absolute;
     inset: 0;
@@ -222,8 +195,7 @@
     display: block;
 }
 
-/* Booking */
-
+/* Booking specific body - No scrollbar! */
 .floating-widget .floating-booking-body {
     padding: 12px 14px 14px 14px;
     background: #ffffff;
@@ -241,6 +213,7 @@
     width: 0 !important;
 }
 
+/* Korte omschrijving in boeker */
 .booking-desc {
     margin: 0 0 8px 0;
     font-size: 12px;
@@ -248,6 +221,7 @@
     color: #000000;
 }
 
+/* Meer informatie knop */
 .booking-more-info-btn {
     display: block;
     text-align: center;
@@ -271,68 +245,43 @@
     color: #ffffff;
 }
 
-
-/* Minimized pill */
-
+/* Minimized Button - Zwart balkje, 4kant, GEEN hover, fingertje cursor */
 .floating-widget .floating-min-pill {
-    position: absolute !important;
-
     display: inline-flex;
     align-items: center;
     gap: 8px;
-
     background: #000000 !important;
     color: #ffffff !important;
     border: 1px solid #000000;
-    border-radius: 0 !important;
+    border-radius: 0 !important; /* 4kant */
     padding: 8px 14px;
-
     font-family: 'DINBold', Arial, sans-serif;
     font-size: 13px;
     letter-spacing: 0.5px;
     text-transform: uppercase;
-
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
-    cursor: pointer !important;
+    cursor: pointer !important; /* Fingertje! */
     user-select: none;
     white-space: nowrap;
-
+    transition: opacity 0.2s ease, transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.2s;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
     transform: scale(0.85);
-
-    transition:
-        opacity 0.20s ease,
-        transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-        visibility 0.20s;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
-/* Geen kleurvlak-verandering bij hover */
-
-.floating-widget .floating-min-pill:hover,
-.floating-widget .floating-min-pill:focus,
-.floating-widget .floating-min-pill:active {
+/* Geen hover op de geminimaliseerde popups */
+.floating-widget .floating-min-pill:hover {
     background: #000000 !important;
     color: #ffffff !important;
-    outline: none;
+    cursor: pointer !important;
 }
 
-/* Plusje in de minimized pill */
-
-.floating-widget .floating-min-pill::after {
-    content: '+';
-    display: inline-block;
-    margin-left: 3px;
-    font-family: Arial, sans-serif;
-    font-size: 19px;
-    font-weight: 400;
-    line-height: 1;
-    transition: transform 0.20s ease;
-}
-
-.floating-widget .floating-min-pill:hover::after {
-    transform: rotate(90deg);
+.floating-widget .floating-min-pill:active {
+    cursor: pointer !important;
 }
 
 .floating-widget .pill-icon {
@@ -347,48 +296,28 @@
     vertical-align: middle;
 }
 
-/* Minimized state */
-
+/* Minimized State Toggle */
 .floating-widget.is-minimized .floating-window {
-    opacity: 0 !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
     transform: scale(0.85);
-    position: absolute !important;
-    width: 0 !important;
-    height: 0 !important;
-    top: 0 !important;
-    left: 0 !important;
-    border: 0 !important;
-    overflow: hidden !important;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .floating-widget.is-minimized .floating-min-pill {
-    opacity: 1 !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
-
-    position: absolute !important;
-
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
     transform: scale(1);
-
-    width: auto !important;
-    height: auto !important;
-
-    margin: 0 !important;
-
-    z-index: 999999 !important;
+    position: relative;
+    top: auto;
+    left: auto;
 }
 
-/* Tijdens slepen/resizen geen animatie die het meten verstoort */
-
-.floating-widget.is-dragging .floating-window,
-.floating-widget.is-resizing .floating-window {
-    transition: none !important;
-}
-
-/* Booking form */
-
+/* Booking Form - 4kante hoeken en 1px zwarte lijnen */
 .booking-form {
     display: flex;
     flex-direction: column;
@@ -442,6 +371,7 @@
     outline: none;
 }
 
+/* Opmerkingen textarea: wel schaalbaar, maar NOOIT een scrollbalk */
 .booking-form-group textarea {
     resize: vertical;
     min-height: 38px;
@@ -539,8 +469,7 @@
     color: #000000;
 }
 
-/* Mobile */
-
+/* Mobile adjustments */
 @media (max-width: 768px) {
     .floating-widget .floating-window {
         width: calc(100vw - 20px) !important;
@@ -554,12 +483,6 @@
     .booking-form-group input,
     .booking-form-group select,
     .booking-form-group textarea {
-        font-size: 16px !important;
-    }
-
-    .floating-widget .floating-min-pill {
-        right: 12px !important;
-        bottom: 12px !important;
-        max-width: calc(100vw - 24px);
+        font-size: 16px !important; /* Prevents auto-zoom on iOS Safari */
     }
 }
