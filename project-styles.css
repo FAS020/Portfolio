@@ -475,6 +475,13 @@ nav a:hover {
     color: rgb(218, 218, 218); /* Zelfde hover-kleur als de andere links */
 }
 
+.contact-link img {
+    width: 24px; /* Pas grootte aan indien nodig */
+    height: 24px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
 /* Footer styling */
 footer {
     background-color: #fff;
