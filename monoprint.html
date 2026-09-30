@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Franco Soolsma | Monoprint</title>
+    <meta name="description" content="GWA - Experiment, analoge technieken bij Grafische Werkplaats Amsterdam.">
+    <meta property="og:title" content="Monoprint | Franco Soolsma">
+    <meta property="og:description" content="Verslag, werk en ervaring bij Monoprint.">
+    <meta property="og:image" content="Links/Monoprint/1.jpg">
+    <link rel="icon" href="Links/favicon.png" type="image/png">
+    <link rel="stylesheet" href="project-styles.css">
+    <link rel="stylesheet" href="floating-widgets.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <span class="title" id="project-title">Monoprint</span>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li id="werk-link"><a href="#" data-section="work">Project</a></li> <!-- Alleen zichtbaar op mobiel -->
+                    <li id="info-link"><a href="#" data-section="project-info">Project-Info</a></li>
+                </ul>
+                <button class="nav-close-btn" style="display: none;">&times;</button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="column column-title">
+            <div class="title-content title-content--one-line slide-short">
+                <p>Monoprint</p>
+            </div>
+        </div>
+        <div class="column column-photos">
+            <div class="image-container">
+                <img src="Links/Monoprint/1.png" alt="Monoprint" data-expand="true">
+                <img src="Links/Monoprint/2.jpg" alt="Monoprint" data-expand="true">
+                <img src="Links/Monoprint/3.jpg" alt="Monoprint" data-expand="true">
+                <img src="Links/Monoprint/4.jpg" alt="Monoprint" data-expand="true">
+                <img src="Links/Monoprint/5.jpg" alt="Monoprint" data-expand="true">
+                <img src="Links/Monoprint/6.jpg" alt="Monoprint" data-expand="true">
+                <img src="Links/Monoprint/7.jpg" alt="Monoprint" data-expand="true">
+                <img src="Links/Monoprint/8.jpg" alt="Monoprint" data-expand="true">
+                <img src="Links/Monoprint/9.jpg" alt="Monoprint" data-expand="true">
+                <img src="Links/Monoprint/10.jpg" alt="Monoprint" data-expand="true">
+                <img src="Links/Monoprint/11.jpg" alt="Monoprint" data-expand="true">
+                <img src="Links/Monoprint/12.jpg" alt="Monoprint" data-expand="true">
+                <img src="Links/Monoprint/13.jpg" alt="Monoprint" data-expand="true">
+                <img src="Links/Monoprint/14.jpg" alt="Monoprint" data-expand="true">
+            </div>
+        </div>
+        <div class="column column-info">
+            <div class="default-content"></div>
+            <div class="article-content">
+                <h2>Monoprint</h2>
+                <p>Een onderzoek naar autonomie in analoge technieken.
+                    Onderdeel van mijn afstudeerproject waaruit de workshop <br><em>'Wat wil jij schreeuwen tegen de wereld?' </em><br>is ontstaan.</p>
+                    <br>
+                    <p class="contact-link">
+                        <img src="Links/Icons/Link-icon.svg" alt="Speech Icon" class="icon">
+                        <a href="https://monoprint.francosoolsma.nl" target="_blank">Monoprint Manual To...</a>
+                    </p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Portfolio Franco A. Soolsma. All rights reserved.</p>
+    </footer>
+
+    <!-- Floating Draggable Video Widget -->
+    <div class="floating-widget" id="floating-video-widget">
+        <div class="floating-window" role="dialog" aria-label="Monoprint Workshop Video">
+            <div class="floating-header">
+                <div class="floating-drag-area">
+                    <span class="pill-icon">▶</span>
+                    <span class="floating-title">Monoprint Manual To...</span>
+                </div>
+                <div class="floating-controls">
+                    <button type="button" class="floating-btn-ctrl floating-btn-close" aria-label="Sluiten">
+                        <svg width="12" height="12" viewBox="0 0 12 12"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="floating-video-body">
+                <div class="floating-drag-shield"></div>
+                <iframe src="https://www.youtube.com/embed/jSLAWYlU6s8?rel=0&enablejsapi=1" title="Monoprint Workshop Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+            <!-- Resize handle bottom-right corner -->
+            <div class="floating-resize-handle floating-resize-br"></div>
+        </div>
+        <button type="button" class="floating-min-pill" aria-label="Open video venster">
+            <span class="pill-icon">▶</span>
+            <span class="floating-title">Monoprint Manual To...</span>
+        </button>
+    </div>
+
+    <!-- Scripts -->
+    <script src="common.js"></script>
+    <script src="project-script.js"></script>
+    <script src="floating-widgets.js"></script>
+</body>
+</html>
