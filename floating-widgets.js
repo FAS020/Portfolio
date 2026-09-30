@@ -992,80 +992,49 @@
          * MINIMALISEREN
          */
 
-        minimize() {
+        expand() {
 
-            if (
-                this.el.classList.contains(
-                    'is-minimized'
-                )
-            ) {
-                return;
-            }
+    if (
+        !this.el.classList.contains(
+            'is-minimized'
+        )
+    ) {
+        return;
+    }
 
+    /*
+     * Eerst maximaliseren zodat de popup
+     * zijn echte afmetingen krijgt.
+     */
 
-            const windowRect =
-                this.window.getBoundingClientRect();
+    this.el.classList.remove(
+        'is-minimized'
+    );
 
-            const pillRect =
-                this.pill.getBoundingClientRect();
+    /*
+     * Altijd exact in het midden.
+     */
 
+    const windowRect =
+        this.window.getBoundingClientRect();
 
-            /*
-             * Bepalen aan welke kant
-             * de popup staat.
-             */
+    const left =
+        (window.innerWidth -
+            windowRect.width) / 2;
 
-            const centerX =
-                windowRect.left +
-                windowRect.width / 2;
+    const top =
+        (window.innerHeight -
+            windowRect.height) / 2;
 
-            const centerY =
-                windowRect.top +
-                windowRect.height / 2;
+    this.setPosition(
+        left,
+        top
+    );
 
+    this.keepInsideViewport();
 
-            const rightSide =
-                centerX >
-                window.innerWidth / 2;
-
-            const bottomSide =
-                centerY >
-                window.innerHeight / 2;
-
-
-            /*
-             * Nieuwe positie van de pill.
-             */
-
-            const left =
-                rightSide
-                    ? windowRect.right -
-                      pillRect.width
-                    : windowRect.left;
-
-
-            const top =
-                bottomSide
-                    ? windowRect.bottom -
-                      pillRect.height
-                    : windowRect.top;
-
-
-            this.el.classList.add(
-                'is-minimized'
-            );
-
-
-            this.setPosition(
-                left,
-                top
-            );
-
-
-            this.keepInsideViewport();
-
-            this.saveState();
-        }
+    this.saveState();
+}
 
 
         /*
