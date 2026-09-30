@@ -70,36 +70,99 @@
         <p>&copy; 2024 Portfolio Franco A. Soolsma. All rights reserved.</p>
     </footer>
 
-    <!-- Floating Draggable Video Widget -->
-    <div class="floating-widget" id="floating-video-widget">
-        <div class="floating-window" role="dialog" aria-label="Monoprint Workshop Video">
-            <div class="floating-header">
-                <div class="floating-drag-area">
-                    <span class="pill-icon">▶</span>
-                    <span class="floating-title">Monoprint Manual To...</span>
-                </div>
-                <div class="floating-controls">
-                    <button type="button" class="floating-btn-ctrl floating-btn-close" aria-label="Sluiten">
-                        <svg width="12" height="12" viewBox="0 0 12 12"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                    </button>
-                </div>
+<!-- Floating Draggable Video Widget -->
+<div class="floating-widget" id="floating-video-widget">
+
+    <div
+        class="floating-window"
+        role="dialog"
+        aria-label="Monoprint Workshop Video"
+    >
+
+        <!-- Header / drag area -->
+        <div class="floating-header">
+
+            <div class="floating-drag-area">
+
+                <span class="pill-icon">
+                    ▶
+                </span>
+
+                <span class="floating-title">
+                    Monoprint Manual To...
+                </span>
+
             </div>
-            <div class="floating-video-body">
-                <div class="floating-drag-shield"></div>
-                <iframe src="https://www.youtube.com/embed/jSLAWYlU6s8?rel=0&enablejsapi=1" title="Monoprint Workshop Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+
+            <div class="floating-controls">
+
+                <!-- Minimaliseren -->
+                <button
+                    type="button"
+                    class="floating-btn-ctrl floating-btn-close"
+                    aria-label="Minimaliseren"
+                >
+                    <span
+                        class="ctrl-icon"
+                        aria-hidden="true"
+                    ></span>
+                </button>
+
             </div>
-            <!-- Resize handle bottom-right corner -->
-            <div class="floating-resize-handle floating-resize-br"></div>
+
         </div>
-        <button type="button" class="floating-min-pill" aria-label="Open video venster">
-            <span class="pill-icon">▶</span>
-            <span class="floating-title">Monoprint Manual To...</span>
-        </button>
+
+
+        <!-- Video -->
+        <div class="floating-video-body">
+
+            <!--
+                Shield voorkomt dat de YouTube iframe
+                de drag/resize interactie overneemt.
+            -->
+            <div class="floating-drag-shield"></div>
+
+            <iframe
+                src="https://www.youtube.com/embed/jSLAWYlU6s8?rel=0&enablejsapi=1"
+                title="Monoprint Workshop Video"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+            ></iframe>
+
+        </div>
+
+
+        <!-- Resize handle bottom-right -->
+        <div class="floating-resize-handle floating-resize-br"></div>
+
     </div>
 
-    <!-- Scripts -->
-    <script src="common.js"></script>
-    <script src="project-script.js"></script>
-    <script src="floating-widgets.js"></script>
+
+    <!-- Minimized pill -->
+    <button
+        type="button"
+        class="floating-min-pill"
+        aria-label="Open video venster"
+    >
+
+        <span class="pill-icon">
+            ▶
+        </span>
+
+        <span class="floating-title">
+            Monoprint Manual To...
+        </span>
+
+    </button>
+
+</div>
+
+
+<!-- Scripts -->
+<script src="common.js"></script>
+<script src="project-script.js"></script>
+<script src="floating-widgets.js"></script>
 </body>
 </html>
