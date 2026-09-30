@@ -992,7 +992,7 @@
          * MINIMALISEREN
          */
 
-        expand() {
+expand() {
 
     if (
         !this.el.classList.contains(
@@ -1003,37 +1003,29 @@
     }
 
     /*
-     * Eerst maximaliseren zodat de popup
-     * zijn echte afmetingen krijgt.
+     * Eerst de popup weer zichtbaar maken.
      */
-
     this.el.classList.remove(
         'is-minimized'
     );
 
     /*
-     * Altijd exact in het midden.
+     * Even wachten tot de popup zijn
+     * normale afmetingen weer heeft.
      */
+    requestAnimationFrame(() => {
 
-    const windowRect =
-        this.window.getBoundingClientRect();
+        /*
+         * Altijd terug naar de oorspronkelijke
+         * spawnpositie: exact in het midden.
+         */
+        this.center();
 
-    const left =
-        (window.innerWidth -
-            windowRect.width) / 2;
+        this.keepInsideViewport();
 
-    const top =
-        (window.innerHeight -
-            windowRect.height) / 2;
+        this.saveState();
 
-    this.setPosition(
-        left,
-        top
-    );
-
-    this.keepInsideViewport();
-
-    this.saveState();
+    });
 }
 
 
