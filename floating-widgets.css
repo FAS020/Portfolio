@@ -1,1251 +1,569 @@
 /* ==========================================================================
-   FLOATING WIDGETS
+   Floating Widgets
+   - Popup blijft binnen viewport
+   - Geminimaliseerde knop altijd rechtsonder
+   - Geen hover-vlak achter de min/close knop
+   - Video kan alleen naar rechts groter worden
    ========================================================================== */
 
 .floating-widget {
-
-    position: fixed;
-
+    position: fixed !important;
     z-index: 1200;
-
     box-sizing: border-box;
-
     font-family: 'AvenirNextRegular', Arial, sans-serif;
-
     color: #000000;
-
     -webkit-font-smoothing: antialiased;
-
     user-select: none;
     -webkit-user-select: none;
-
     touch-action: none;
 
     left: 50%;
     top: 50%;
-
+    right: auto;
+    bottom: auto;
     transform: translate(-50%, -50%);
 }
 
-
-/* ==========================================================================
-   WINDOW
-   ========================================================================== */
-
 .floating-widget .floating-window {
-
     width: 360px;
-
     max-width: calc(100vw - 24px);
-
     background: #ffffff;
-
     border: 1px solid #000000;
-
     border-radius: 0 !important;
-
-    box-shadow:
-        0 10px 30px rgba(0, 0, 0, 0.16);
-
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
     overflow: hidden;
-
     position: relative;
-
     display: flex;
     flex-direction: column;
 
     opacity: 1;
     visibility: visible;
-
     transform: scale(1);
-
     transform-origin: center center;
-
-    pointer-events: auto;
-
     transition:
-        opacity 0.28s ease,
-        transform 0.30s cubic-bezier(0.16, 1, 0.3, 1),
-        visibility 0s linear 0s;
+        opacity 0.20s ease,
+        transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+        visibility 0.20s;
+    pointer-events: auto;
 }
 
-
 #floating-booking-widget .floating-window {
-
     width: 440px;
-
     max-width: calc(100vw - 20px);
 }
 
-
-/* ==========================================================================
-   HEADER
-   ========================================================================== */
+/* Header */
 
 .floating-widget .floating-header {
-
     background: #000000;
-
     color: #ffffff;
-
     padding: 7px 10px;
-
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
-
     cursor: grab;
-
     user-select: none;
-
     touch-action: none;
-
     border-bottom: 1px solid #000000;
-
     border-radius: 0 !important;
 }
-
 
 .floating-widget .floating-header:active,
 .floating-widget.is-dragging .floating-header {
-
     cursor: grabbing;
 }
 
-
-/* ==========================================================================
-   DRAG AREA
-   ========================================================================== */
-
 .floating-widget .floating-drag-area {
-
     display: flex;
-
     align-items: center;
-
     flex-grow: 1;
-
     min-width: 0;
-
     overflow: hidden;
-
     pointer-events: none;
-
     gap: 10px;
 }
 
-
-/* ==========================================================================
-   TITLE
-   ========================================================================== */
-
 .floating-widget .floating-title {
-
     font-family: 'DINBold', Arial, sans-serif;
-
     font-size: 13px;
-
     letter-spacing: 0.5px;
-
     text-transform: uppercase;
-
     white-space: nowrap;
-
     overflow: hidden;
-
     text-overflow: ellipsis;
-
     color: #ffffff;
 }
 
-
-#floating-booking-widget
-.floating-header
-.floating-title {
-
+#floating-booking-widget .floating-header .floating-title {
+    color: #ffffff;
     font-size: 13.5px;
-
     letter-spacing: 0.2px;
 }
 
-
-/* ==========================================================================
-   CONTROLS
-   ========================================================================== */
-
 .floating-widget .floating-controls {
-
     display: flex;
-
     align-items: center;
-
     margin-left: 8px;
-
     flex-shrink: 0;
 }
 
-
-/* ==========================================================================
-   MINIMIZE BUTTON
-   ========================================================================== */
+/* Min/close button: geen achtergrond, ook niet bij hover */
 
 .floating-widget .floating-btn-ctrl {
-
     position: relative;
-
     width: 24px;
     height: 24px;
-
     padding: 0;
     margin: 0;
-
-    border: 0;
-
-    border-radius: 0 !important;
-
-    background: transparent !important;
-
-    color: #ffffff;
-
-    cursor: pointer;
-
     display: inline-flex;
-
     align-items: center;
     justify-content: center;
 
-    appearance: none;
-    -webkit-appearance: none;
-
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    color: #ffffff !important;
+    cursor: pointer;
+    box-shadow: none !important;
     outline: none;
 
-    box-shadow: none !important;
-
     transition: color 0.15s ease;
+    touch-action: auto;
 }
-
-
-/*
-   EXTRA BELANGRIJK:
-
-   Geen browser-hover achtergrond.
-*/
 
 .floating-widget .floating-btn-ctrl:hover,
 .floating-widget .floating-btn-ctrl:focus,
-.floating-widget .floating-btn-ctrl:focus-visible,
 .floating-widget .floating-btn-ctrl:active {
-
     background: transparent !important;
-
-    background-color: transparent !important;
-
-    color: #ffffff;
-
-    outline: none;
-
     box-shadow: none !important;
+    color: #ffffff !important;
 }
 
+/* Het bestaande SVG kruisje wordt gebruikt als sluitteken.
+   Voor een simpele '-' wordt de SVG verborgen en tekenen we zelf. */
 
-/* ==========================================================================
-   MINUS / CROSS
-   ========================================================================== */
-
-.floating-widget .ctrl-icon {
-
-    position: relative;
-
-    display: block;
-
-    width: 12px;
-    height: 12px;
-
-    flex: 0 0 12px;
+.floating-widget .floating-btn-ctrl svg {
+    display: none;
 }
 
-
-/*
-   Horizontal line.
-*/
-
-.floating-widget .ctrl-icon::before {
-
-    content: "";
-
-    position: absolute;
-
-    left: 0;
-    top: 5px;
-
-    width: 12px;
+.floating-widget .floating-btn-ctrl::before {
+    content: '';
+    width: 11px;
     height: 2px;
-
-    background: #ffffff;
-
-    border-radius: 1px;
-
-    transform: rotate(0deg);
-
-    opacity: 1;
-
-    transition:
-        transform 0.20s ease,
-        opacity 0.20s ease;
+    background: currentColor;
+    display: block;
+    transition: transform 0.20s ease;
 }
 
-
-/*
-   Vertical line.
-   Hidden normally.
-*/
-
-.floating-widget .ctrl-icon::after {
-
-    content: "";
-
-    position: absolute;
-
-    left: 5px;
-    top: 0;
-
-    width: 2px;
-    height: 12px;
-
-    background: #ffffff;
-
-    border-radius: 1px;
-
-    transform: rotate(0deg) scaleY(0);
-
-    transform-origin: center;
-
-    opacity: 0;
-
-    transition:
-        transform 0.20s ease,
-        opacity 0.20s ease;
-}
-
-
-/*
-   Hover:
-
-   - remains visible
-   - becomes X
-*/
-
-.floating-widget .floating-btn-ctrl:hover .ctrl-icon::before {
-
+.floating-widget .floating-btn-ctrl:hover::before {
     transform: rotate(45deg);
 }
 
-
-.floating-widget .floating-btn-ctrl:hover .ctrl-icon::after {
-
-    transform:
-        rotate(45deg)
-        scaleY(1);
-
-    opacity: 1;
+.floating-widget .floating-btn-ctrl:hover::after {
+    content: '';
+    position: absolute;
+    width: 11px;
+    height: 2px;
+    background: currentColor;
+    transform: rotate(-45deg);
+    transition: transform 0.20s ease;
 }
 
-
-/* ==========================================================================
-   VIDEO
-   ========================================================================== */
+/* Video */
 
 .floating-widget .floating-video-body {
-
     position: relative;
-
     width: 100%;
-
     aspect-ratio: 16 / 9;
-
     background: #000000;
-
-    flex-shrink: 0;
 }
-
 
 .floating-widget .floating-video-body iframe {
-
     width: 100%;
     height: 100%;
-
-    border: 0;
-
+    border: none;
     display: block;
 }
-
-
-/* ==========================================================================
-   DRAG SHIELD
-   ========================================================================== */
-
-.floating-widget .floating-drag-shield {
-
-    position: absolute;
-
-    inset: 0;
-
-    z-index: 10;
-
-    display: none;
-
-    background: transparent;
-}
-
-
-.floating-widget.is-dragging
-.floating-drag-shield,
-
-.floating-widget.is-resizing
-.floating-drag-shield {
-
-    display: block;
-}
-
-
-/* ==========================================================================
-   RESIZE HANDLE
-   ========================================================================== */
 
 .floating-resize-br {
-
     position: absolute;
-
-    right: 0;
     bottom: 0;
-
-    width: 24px;
-    height: 24px;
-
-    z-index: 30;
-
+    right: 0;
+    width: 22px;
+    height: 22px;
     cursor: se-resize;
-
+    z-index: 30;
     touch-action: none;
 }
 
-
 .floating-resize-br::before {
-
-    content: "";
-
+    content: '';
     position: absolute;
-
-    right: 4px;
     bottom: 4px;
-
+    right: 4px;
     width: 8px;
     height: 8px;
-
     border-right: 2px solid #ffffff;
     border-bottom: 2px solid #ffffff;
-
-    box-shadow:
-        1px 1px 2px rgba(0, 0, 0, 0.9);
-
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
     pointer-events: none;
 }
 
+.floating-widget .floating-drag-shield {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    background: transparent;
+    display: none;
+}
 
-/* ==========================================================================
-   BOOKING BODY
-   ========================================================================== */
+.floating-widget.is-dragging .floating-drag-shield,
+.floating-widget.is-resizing .floating-drag-shield {
+    display: block;
+}
+
+/* Booking */
 
 .floating-widget .floating-booking-body {
-
     padding: 12px 14px 14px 14px;
-
     background: #ffffff;
-
     overflow: hidden !important;
-
     max-height: none;
-
-    box-sizing: border-box;
-
     user-select: auto;
     -webkit-user-select: auto;
-
+    box-sizing: border-box;
     scrollbar-width: none !important;
-
     -ms-overflow-style: none !important;
 }
 
-
-.floating-widget
-.floating-booking-body::-webkit-scrollbar {
-
+.floating-widget .floating-booking-body::-webkit-scrollbar {
     display: none !important;
-
     width: 0 !important;
 }
 
-
-/* ==========================================================================
-   BOOKING DESCRIPTION
-   ========================================================================== */
-
 .booking-desc {
-
     margin: 0 0 8px 0;
-
     font-size: 12px;
-
     line-height: 1.4;
-
     color: #000000;
 }
-
-
-/* ==========================================================================
-   MORE INFO
-   ========================================================================== */
 
 .booking-more-info-btn {
-
     display: block;
-
     text-align: center;
-
     font-family: 'DINBold', Arial, sans-serif;
-
     font-size: 11.5px;
-
     letter-spacing: 0.5px;
-
     text-transform: uppercase;
-
     color: #000000;
-
     text-decoration: none;
-
     border: 1px solid #000000;
-
     border-radius: 0 !important;
-
     padding: 5px 8px;
-
     margin-bottom: 10px;
-
     background: #ffffff;
-
+    transition: background 0.15s ease, color 0.15s ease;
     box-sizing: border-box;
-
-    transition:
-        background 0.15s ease,
-        color 0.15s ease;
 }
-
 
 .booking-more-info-btn:hover {
-
     background: #000000;
-
     color: #ffffff;
 }
 
-
-/* ==========================================================================
-   MINIMIZED PILL
-   ========================================================================== */
+/* Minimized pill
+   Belangrijk: de PIL zelf is fixed.
+   Daardoor kan de parent niet meer buiten het scherm komen. */
 
 .floating-widget .floating-min-pill {
-
-    position: absolute;
-
-    top: 0;
-    left: 0;
+    position: fixed !important;
+    right: 20px !important;
+    bottom: 20px !important;
+    left: auto !important;
+    top: auto !important;
 
     display: inline-flex;
-
     align-items: center;
-
     gap: 8px;
 
-    box-sizing: border-box;
-
-    padding: 8px 12px;
-
     background: #000000 !important;
-
-    background-color: #000000 !important;
-
     color: #ffffff !important;
-
     border: 1px solid #000000;
-
     border-radius: 0 !important;
-
-    box-shadow:
-        0 4px 18px rgba(0, 0, 0, 0.25);
+    padding: 8px 14px;
 
     font-family: 'DINBold', Arial, sans-serif;
-
     font-size: 13px;
-
     letter-spacing: 0.5px;
-
     text-transform: uppercase;
 
-    cursor: pointer;
-
-    white-space: nowrap;
-
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+    cursor: pointer !important;
     user-select: none;
-
-    appearance: none;
-    -webkit-appearance: none;
-
-    opacity: 0;
-
-    visibility: hidden;
-
-    pointer-events: none;
-
-    transform: scale(0.85);
-
-    transform-origin: center;
-
-    transition:
-        opacity 0.28s ease,
-        transform 0.30s cubic-bezier(0.16, 1, 0.3, 1),
-        visibility 0s linear 0.30s;
-}
-
-
-/*
-   Kill every possible button hover background.
-*/
-
-.floating-widget .floating-min-pill:hover,
-.floating-widget .floating-min-pill:focus,
-.floating-widget .floating-min-pill:focus-visible,
-.floating-widget .floating-min-pill:active {
-
-    background: #000000 !important;
-
-    background-color: #000000 !important;
-
-    color: #ffffff !important;
-
-    outline: none;
-
-    box-shadow:
-        0 4px 18px rgba(0, 0, 0, 0.25);
-}
-
-
-/* ==========================================================================
-   PILL CONTENT
-   ========================================================================== */
-
-.floating-widget .pill-icon {
-
-    display: inline-flex;
-
-    align-items: center;
-    justify-content: center;
-
-    font-size: 11px;
-
-    line-height: 1;
-}
-
-
-.floating-widget .pill-speech-icon {
-
-    width: 20px;
-    height: 20px;
-
-    object-fit: contain;
-
-    display: inline-block;
-}
-
-
-.floating-widget .pill-label {
-
-    display: inline-block;
-}
-
-
-/*
-   The video pill uses .floating-title rather than .pill-label.
-*/
-
-.floating-widget .floating-min-pill
-.floating-title {
-
-    color: #ffffff;
-
-    font-family: 'DINBold', Arial, sans-serif;
-
-    font-size: 13px;
-
-    letter-spacing: 0.5px;
-
-    text-transform: uppercase;
-
     white-space: nowrap;
-}
-
-
-/* ==========================================================================
-   PLUS
-   ========================================================================== */
-
-.floating-widget .floating-min-pill::after {
-
-    content: "+";
-
-    display: inline-flex;
-
-    align-items: center;
-    justify-content: center;
-
-    flex: 0 0 18px;
-
-    width: 18px;
-    height: 18px;
-
-    margin-left: 2px;
-
-    color: #ffffff;
-
-    font-family: Arial, sans-serif;
-
-    font-size: 19px;
-
-    font-weight: 400;
-
-    line-height: 18px;
 
     opacity: 0;
-
-    transform:
-        scale(0.5)
-        rotate(-45deg);
+    visibility: hidden;
+    pointer-events: none;
+    transform: scale(0.85);
 
     transition:
         opacity 0.20s ease,
-        transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+        visibility 0.20s;
 }
 
+/* Geen kleurvlak-verandering bij hover */
+
+.floating-widget .floating-min-pill:hover,
+.floating-widget .floating-min-pill:focus,
+.floating-widget .floating-min-pill:active {
+    background: #000000 !important;
+    color: #ffffff !important;
+    outline: none;
+}
+
+/* Plusje in de minimized pill */
+
+.floating-widget .floating-min-pill::after {
+    content: '+';
+    display: inline-block;
+    margin-left: 3px;
+    font-family: Arial, sans-serif;
+    font-size: 19px;
+    font-weight: 400;
+    line-height: 1;
+    transition: transform 0.20s ease;
+}
 
 .floating-widget .floating-min-pill:hover::after {
-
-    opacity: 1;
-
-    transform:
-        scale(1)
-        rotate(0deg);
+    transform: rotate(90deg);
 }
 
-
-.floating-widget .floating-min-pill:active::after {
-
-    transform:
-        scale(0.9)
-        rotate(90deg);
+.floating-widget .pill-icon {
+    font-size: 11px;
 }
 
-
-/* ==========================================================================
-   MINIMIZED STATE
-   ========================================================================== */
-
-.floating-widget.is-minimized
-.floating-window {
-
-    opacity: 0;
-
-    visibility: hidden;
-
-    pointer-events: none;
-
-    transform:
-        scale(0.84);
-
-    transition:
-        opacity 0.28s ease,
-        transform 0.30s cubic-bezier(0.16, 1, 0.3, 1),
-        visibility 0s linear 0.30s;
+.floating-widget .pill-speech-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    display: inline-block;
+    vertical-align: middle;
 }
 
+/* Minimized state */
 
-.floating-widget.is-minimized
-.floating-min-pill {
+.floating-widget.is-minimized .floating-window {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transform: scale(0.85);
+    position: absolute !important;
+    width: 0 !important;
+    height: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    border: 0 !important;
+    overflow: hidden !important;
+}
 
-    opacity: 1;
-
-    visibility: visible;
-
-    pointer-events: auto;
-
+.floating-widget.is-minimized .floating-min-pill {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    position: fixed !important;
+    right: 20px !important;
+    bottom: 20px !important;
+    left: auto !important;
+    top: auto !important;
     transform: scale(1);
-
-    position: relative;
-
-    top: auto;
-    left: auto;
-
-    transition:
-        opacity 0.28s ease 0.04s,
-        transform 0.30s cubic-bezier(0.16, 1, 0.3, 1) 0.04s,
-        visibility 0s linear 0s;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    z-index: 999999 !important;
 }
 
+/* Tijdens slepen/resizen geen animatie die het meten verstoort */
 
-/* ==========================================================================
-   MINIMIZING
-   ========================================================================== */
-
-.floating-widget.is-minimizing
-.floating-window {
-
-    opacity: 0;
-
-    transform:
-        scale(0.84);
-
-    pointer-events: none;
-}
-
-
-.floating-widget.is-minimizing
-.floating-min-pill {
-
-    opacity: 0;
-
-    visibility: hidden;
-
-    transform:
-        scale(0.84);
-
-    pointer-events: none;
-}
-
-
-/* ==========================================================================
-   EXPANDING
-   ========================================================================== */
-
-.floating-widget.is-expanding
-.floating-window {
-
-    opacity: 1;
-
-    visibility: visible;
-
-    pointer-events: auto;
-
-    transform:
-        scale(1);
-}
-
-
-.floating-widget.is-expanding
-.floating-min-pill {
-
-    opacity: 0;
-
-    visibility: hidden;
-
-    pointer-events: none;
-
-    transform:
-        scale(0.84);
-}
-
-
-/* ==========================================================================
-   POSITION ANIMATION
-
-   Alleen tijdens minimize / expand.
-   Tijdens normaal slepen staat dit UIT.
-   ========================================================================== */
-
-.floating-widget.is-transitioning {
-
-    transition:
-        left 0.30s cubic-bezier(0.16, 1, 0.3, 1),
-        top 0.30s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-
-/*
-   Dragging must NEVER lag.
-*/
-
-.floating-widget.is-dragging {
-
+.floating-widget.is-dragging .floating-window,
+.floating-widget.is-resizing .floating-window {
     transition: none !important;
 }
 
-
-/*
-   Resize must NEVER lag.
-*/
-
-.floating-widget.is-resizing {
-
-    transition: none !important;
-}
-
-
-/* ==========================================================================
-   FIRST OPEN ANIMATION
-   ========================================================================== */
-
-.floating-widget.is-first-open
-.floating-window {
-
-    opacity: 0;
-
-    transform:
-        scale(0.88);
-}
-
-
-.floating-widget.is-first-open
-.floating-window {
-
-    animation:
-        floatingWindowEntrance
-        0.45s
-        cubic-bezier(0.16, 1, 0.3, 1)
-        forwards;
-}
-
-
-@keyframes floatingWindowEntrance {
-
-    0% {
-
-        opacity: 0;
-
-        transform:
-            scale(0.88);
-    }
-
-    100% {
-
-        opacity: 1;
-
-        transform:
-            scale(1);
-    }
-}
-
-
-/* ==========================================================================
-   BOOKING FORM
-   ========================================================================== */
+/* Booking form */
 
 .booking-form {
-
     display: flex;
-
     flex-direction: column;
-
     gap: 7px;
 }
 
-
 .booking-form-group {
-
     display: flex;
-
     flex-direction: column;
-
     gap: 2px;
 }
 
-
 .booking-form-group label {
-
     font-size: 10px;
-
     font-family: 'DINBold', Arial, sans-serif;
-
     letter-spacing: 0.5px;
-
     text-transform: uppercase;
-
     color: #000000;
 }
 
+.booking-form-group label .req {
+    color: #000000;
+}
 
 .booking-form-group input,
 .booking-form-group select,
 .booking-form-group textarea {
-
-    width: 100%;
-
-    box-sizing: border-box;
-
     border: 1px solid #000000 !important;
-
     border-radius: 0 !important;
-
     padding: 5px 7px;
-
     font-family: 'AvenirNextRegular', Arial, sans-serif;
-
     font-size: 12px;
-
     color: #000000;
-
     background: #ffffff;
-
-    transition:
-        background 0.15s ease;
+    transition: background 0.15s ease;
+    box-sizing: border-box;
+    width: 100%;
 }
-
 
 .booking-form-group input:hover,
 .booking-form-group select:hover,
 .booking-form-group textarea:hover {
-
     background: #fbfbfb;
 }
-
 
 .booking-form-group input:focus,
 .booking-form-group select:focus,
 .booking-form-group textarea:focus {
-
     border: 1px solid #000000 !important;
-
     background: #ffffff;
-
     outline: none;
 }
 
-
-/* ==========================================================================
-   FORM ROW
-   ========================================================================== */
-
-.booking-form-row {
-
-    display: grid;
-
-    grid-template-columns: 1fr 1fr;
-
-    gap: 7px;
-}
-
-
-/* ==========================================================================
-   TEXTAREA
-   ========================================================================== */
-
 .booking-form-group textarea {
-
     resize: vertical;
-
     min-height: 38px;
-
     max-height: 140px;
-
     overflow-y: hidden !important;
-
     scrollbar-width: none !important;
-
     -ms-overflow-style: none !important;
 }
 
-
 .booking-form-group textarea::-webkit-scrollbar {
-
     display: none !important;
-
     width: 0 !important;
 }
 
-
-/* ==========================================================================
-   SUBMIT
-   ========================================================================== */
+.booking-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+}
 
 .booking-submit-btn {
-
     background: #000000;
-
     color: #ffffff;
-
     font-family: 'DINBold', Arial, sans-serif;
-
     font-size: 12.5px;
-
     letter-spacing: 0.5px;
-
     text-transform: uppercase;
-
     padding: 8px 12px;
-
     border: 1px solid #000000;
-
     border-radius: 0 !important;
-
     cursor: pointer;
-
-    transition:
-        background 0.15s ease,
-        color 0.15s ease;
-
+    transition: background 0.15s ease, color 0.15s ease;
     display: flex;
-
     align-items: center;
     justify-content: center;
-
     gap: 6px;
-
     margin-top: 2px;
 }
 
-
 .booking-submit-btn:hover {
-
     background: #ffffff;
-
     color: #000000;
 }
 
-
-/* ==========================================================================
-   FEEDBACK
-   ========================================================================== */
-
 .booking-feedback {
-
     background: #ffffff;
-
     border: 1px solid #000000;
-
     border-radius: 0 !important;
-
     padding: 10px;
-
     margin-bottom: 8px;
-
     display: none;
 }
 
-
 .booking-feedback.show {
-
     display: block;
 }
 
-
 .booking-feedback h5 {
-
     margin: 0 0 4px 0;
-
     color: #000000;
-
     font-family: 'DINBold', Arial, sans-serif;
-
     font-size: 13px;
-
     text-transform: uppercase;
 }
 
-
 .booking-feedback p {
-
     margin: 0 0 8px 0;
-
     font-size: 11.5px;
-
     color: #000000;
-
     line-height: 1.35;
 }
 
-
 .booking-feedback-actions {
-
     display: flex;
-
     gap: 6px;
-
     flex-wrap: wrap;
 }
 
-
 .booking-feedback-btn {
-
     font-family: 'DINBold', Arial, sans-serif;
-
     font-size: 11px;
-
     letter-spacing: 0.5px;
-
     text-transform: uppercase;
-
     padding: 5px 9px;
-
     border-radius: 0 !important;
-
     border: 1px solid #000000;
-
     background: #000000;
-
     color: #ffffff;
-
     cursor: pointer;
-
-    transition:
-        background 0.15s ease,
-        color 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease;
 }
 
-
 .booking-feedback-btn:hover {
-
     background: #ffffff;
-
     color: #000000;
 }
 
-
-/* ==========================================================================
-   MOBILE
-   ========================================================================== */
+/* Mobile */
 
 @media (max-width: 768px) {
-
     .floating-widget .floating-window {
-
-        width:
-            calc(100vw - 20px) !important;
-
+        width: calc(100vw - 20px) !important;
         max-width: 440px;
     }
 
-
-    #floating-booking-widget
-    .floating-title {
-
+    #floating-booking-widget .floating-title {
         font-size: 11.5px;
     }
-
 
     .booking-form-group input,
     .booking-form-group select,
     .booking-form-group textarea {
-
         font-size: 16px !important;
     }
 
+    .floating-widget .floating-min-pill {
+        right: 12px !important;
+        bottom: 12px !important;
+        max-width: calc(100vw - 24px);
+    }
 }
