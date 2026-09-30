@@ -128,11 +128,26 @@
     </footer>
 
     <!-- Floating Draggable Workshop Booking Popup -->
-<div class="floating-widget" id="floating-booking-widget">
+<!-- ================================================================
+     FLOATING WORKSHOP BOOKING POPUP
+     ================================================================ -->
 
-    <div class="floating-window" role="dialog" aria-label="‘Wat wil jij schreeuwen tegen de wereld?’">
+<div
+    class="floating-widget"
+    id="floating-booking-widget"
+>
 
-        <!-- Header / drag area -->
+    <!-- ============================================================
+         POPUP WINDOW
+         ============================================================ -->
+
+    <div
+        class="floating-window"
+        role="dialog"
+        aria-label="‘Wat wil jij schreeuwen tegen de wereld?’"
+    >
+
+        <!-- HEADER -->
         <div class="floating-header">
 
             <div class="floating-drag-area">
@@ -149,18 +164,20 @@
 
             </div>
 
+
             <div class="floating-controls">
 
-                <!-- Minimaliseren -->
                 <button
                     type="button"
                     class="floating-btn-ctrl floating-btn-close"
                     aria-label="Minimaliseren"
                 >
+
                     <span
                         class="ctrl-icon"
                         aria-hidden="true"
                     ></span>
+
                 </button>
 
             </div>
@@ -168,7 +185,7 @@
         </div>
 
 
-        <!-- Booking content -->
+        <!-- BOOKING BODY -->
         <div class="floating-booking-body">
 
             <p class="booking-desc">
@@ -186,7 +203,7 @@
             </a>
 
 
-            <!-- Feedback na aanvraag -->
+            <!-- FEEDBACK -->
             <div class="booking-feedback">
 
                 <h5>
@@ -218,10 +235,9 @@
             </div>
 
 
-            <!-- Booking form -->
+            <!-- FORM -->
             <form class="booking-form">
 
-                <!-- Naam / E-mail -->
                 <div class="booking-form-row">
 
                     <div class="booking-form-group">
@@ -260,7 +276,6 @@
                 </div>
 
 
-                <!-- Telefoon / Datum -->
                 <div class="booking-form-row">
 
                     <div class="booking-form-group">
@@ -297,7 +312,6 @@
                 </div>
 
 
-                <!-- Deelnemers / Type -->
                 <div class="booking-form-row">
 
                     <div class="booking-form-group">
@@ -358,7 +372,6 @@
                 </div>
 
 
-                <!-- Opmerkingen -->
                 <div class="booking-form-group">
 
                     <label for="booking-message">
@@ -375,7 +388,6 @@
                 </div>
 
 
-                <!-- Submit -->
                 <button
                     type="submit"
                     class="booking-submit-btn"
@@ -390,7 +402,10 @@
     </div>
 
 
-    <!-- Minimized pill -->
+    <!-- ============================================================
+         MINIMIZED PILL
+         ============================================================ -->
+
     <button
         type="button"
         class="floating-min-pill"
@@ -412,7 +427,10 @@
 </div>
 
 
-<!-- Scripts -->
+<!-- ================================================================
+     SCRIPTS
+     ================================================================ -->
+
 <script src="common.js"></script>
 <script src="index-script.js"></script>
 <script src="floating-widgets.js"></script>
