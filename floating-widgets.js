@@ -1,984 +1,1001 @@
 /**
- * Draggable Floating Widgets
- * Video Window & Workshop Booking Popup
- * Franco Soolsma Portfolio
+ * floating-widgets.js
  *
- * - Viewport-safe positioning
- * - Persistent position/state
- * - Minimized state survives page changes/reloads
- * - First visit starts centered
- * - Minimized pill always stays fully inside viewport
+ * Nieuwe versie voor:
+ * - floating-video-widget
+ * - floating-booking-widget
+ *
+ * Functies:
+ * - Popup slepen via header
+ * - Geminimaliseerde pill slepen
+ * - Klik op pill = popup openen
+ * - Sluiten = minimaliseren
+ * - Positie onthouden
+ * - Geminimaliseerde status onthouden
+ * - Popup blijft binnen scherm
+ * - Video-resize groeit naar RECHTS
+ * - Workshopformulier
  */
 
 (function () {
+    'use strict';
 
-    class DraggableWidget {
+    const STORAGE_PREFIX = 'franco-floating-widget-';
 
-        constructor(widgetEl) {
+    class FloatingWidget {
 
-            this.widget = widgetEl;
+        constructor(element) {
 
-            this.windowEl = widgetEl.querySelector('.floating-window');
-            this.headerEl = widgetEl.querySelector('.floating-header');
-            this.minPillEl = widgetEl.querySelector('.floating-min-pill');
-            this.closeBtn = widgetEl.querySelector('.floating-btn-close');
-            this.shield = widgetEl.querySelector('.floating-drag-shield');
-            this.resizeBr = widgetEl.querySelector('.floating-resize-br');
+            this.el = element;
 
-            this.isDragging = false;
-            this.isResizing = false;
-            this.hasMoved = false;
+            this.window = element.querySelector('.floating-window');
+            this.header = element.querySelector('.floating-header');
+            this.pill = element.querySelector('.floating-min-pill');
+            this.closeButton = element.querySelector('.floating-btn-close');
+            this.resizeHandle = element.querySelector('.floating-resize-br');
+            this.dragShield = element.querySelector('.floating-drag-shield');
 
-            this.startX = 0;
-            this.startY = 0;
+            if (!this.window || !this.pill) {
+                return;
+            }
 
-            this.initialLeft = 0;
-            this.initialTop = 0;
+            this.id = element.id || 'floating-widget';
 
-            this.startWidth = 0;
-            this.startHeight = 0;
+            this.storageKey =
+                STORAGE_PREFIX + this.id;
 
-            this.startLeft = 0;
+            this.dragging = false;
+            this.resizing = false;
+            this.moved = false;
 
-            this.dragTarget = null;
-            this.currentPointerId = null;
+            this.pointerStartX = 0;
+            this.pointerStartY = 0;
 
-            /*
-             * Every widget gets its own localStorage keys.
-             */
-            this.storagePrefix = `floatingWidget_${this.widget.id}`;
+            this.elementStartLeft = 0;
+            this.elementStartTop = 0;
 
-            this.positionKey = `${this.storagePrefix}_position`;
-            this.minimizedKey = `${this.storagePrefix}_minimized`;
-            this.seenKey = `${this.storagePrefix}_seen`;
+            this.resizeStartX = 0;
+            this.resizeStartWidth = 0;
+            this.resizeStartLeft = 0;
 
-            this.onPointerMove = this.onPointerMove.bind(this);
-            this.onPointerUp = this.onPointerUp.bind(this);
+            this.dragType = null;
 
-            this.init();
+            this.moveHandler =
+                this.onPointerMove.bind(this);
+
+            this.upHandler =
+                this.onPointerUp.bind(this);
+
+            this.resizeMoveHandler =
+                this.onResizeMove.bind(this);
+
+            this.resizeUpHandler =
+                this.onResizeUp.bind(this);
+
+            this.setup();
         }
 
 
-        /* ============================================================
-           INITIALIZATION
-        ============================================================ */
+        /*
+         * INITIALISATIE
+         */
 
-        init() {
-
-            if (!this.widget) return;
+        setup() {
 
             /*
-             * First let the browser calculate the actual dimensions.
+             * De widget wordt rechtstreeks onder body gezet.
+             *
+             * Hierdoor kunnen containers zoals:
+             * transform
+             * overflow
+             * columns
+             * flex containers
+             *
+             * de fixed popup niet meer verkeerd positioneren.
              */
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    this.restoreState();
-                });
-            });
+
+            if (this.el.parentElement !== document.body) {
+                document.body.appendChild(this.el);
+            }
 
 
             /*
-             * Header dragging.
+             * Oude transform verwijderen.
              */
-            if (this.headerEl) {
 
-                this.headerEl.addEventListener('pointerdown', (e) => {
+            this.el.style.transform = 'none';
 
-                    /*
-                     * Never drag when clicking a control/button.
-                     */
+            this.el.style.right = 'auto';
+
+            this.el.style.bottom = 'auto';
+
+
+            /*
+             * Vorige positie/status terugzetten.
+             */
+
+            this.restoreState();
+
+
+            /*
+             * HEADER SLEPEN
+             */
+
+            if (this.header) {
+
+                this.header.addEventListener(
+                    'pointerdown',
+                    (event) => {
+
+                        if (
+                            event.button !== undefined &&
+                            event.button !== 0
+                        ) {
+                            return;
+                        }
+
+                        /*
+                         * Knoppen en form-elementen
+                         * mogen niet de popup slepen.
+                         */
+
+                        if (
+                            event.target.closest(
+                                'button, a, input, select, textarea'
+                            )
+                        ) {
+                            return;
+                        }
+
+                        this.beginDrag(
+                            event,
+                            'window'
+                        );
+                    }
+                );
+            }
+
+
+            /*
+             * GEMINIMALISEERDE PILL
+             */
+
+            this.pill.addEventListener(
+                'pointerdown',
+                (event) => {
+
                     if (
-                        e.target.closest('.floating-controls') ||
-                        e.target.closest('button')
+                        event.button !== undefined &&
+                        event.button !== 0
                     ) {
                         return;
                     }
 
-                    /*
-                     * Do not drag while minimized.
-                     */
-                    if (this.widget.classList.contains('is-minimized')) {
-                        return;
+                    this.beginDrag(
+                        event,
+                        'pill'
+                    );
+                }
+            );
+
+
+            /*
+             * MINIMALISEER-KNOP
+             */
+
+            if (this.closeButton) {
+
+                this.closeButton.addEventListener(
+                    'click',
+                    (event) => {
+
+                        event.preventDefault();
+
+                        event.stopPropagation();
+
+                        this.minimize();
                     }
-
-                    this.startDrag(e);
-                });
+                );
             }
 
 
             /*
-             * Minimized pill:
-             *
-             * IMPORTANT:
-             * The pill is NOT draggable.
-             *
-             * This prevents a click from accidentally moving the pill
-             * outside the viewport.
+             * VIDEO RESIZE HANDLE
              */
-            if (this.minPillEl) {
 
-                this.minPillEl.addEventListener('click', (e) => {
+            if (this.resizeHandle) {
 
-                    e.preventDefault();
-                    e.stopPropagation();
+                this.resizeHandle.addEventListener(
+                    'pointerdown',
+                    (event) => {
 
-                    this.expand();
-                });
-            }
-
-
-            /*
-             * Minimize button.
-             */
-            if (this.closeBtn) {
-
-                this.closeBtn.addEventListener('click', (e) => {
-
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    this.minimize();
-                });
-            }
-
-
-            /*
-             * Video resize handle.
-             */
-            if (this.resizeBr) {
-
-                this.resizeBr.addEventListener('pointerdown', (e) => {
-
-                    this.startResize(e);
-                });
-            }
-
-
-            /*
-             * Keep widget inside viewport when browser changes size.
-             */
-            window.addEventListener('resize', () => {
-
-                requestAnimationFrame(() => {
-
-                    if (this.widget.classList.contains('is-minimized')) {
-
-                        /*
-                         * A minimized pill always returns to the
-                         * bottom-right safe position.
-                         */
-                        this.positionMinimizedPill();
-
-                    } else {
-
-                        this.clampPosition();
-                        this.savePosition();
+                        this.beginResize(event);
                     }
-                });
+                );
+            }
+
+
+            /*
+             * SCHERM GROOTTE VERANDERT
+             */
+
+            window.addEventListener(
+                'resize',
+                () => {
+
+                    this.keepInsideViewport();
+
+                    this.saveState();
+                }
+            );
+
+
+            /*
+             * Na eerste layout nog een keer
+             * controleren.
+             */
+
+            requestAnimationFrame(() => {
+
+                this.keepInsideViewport();
             });
         }
 
 
-        /* ============================================================
-           STORAGE
-        ============================================================ */
+        /*
+         * LOCAL STORAGE
+         */
 
-        savePosition() {
+        getState() {
 
-            const rect = this.widget.getBoundingClientRect();
+            try {
 
-            const position = {
-                left: rect.left,
-                top: rect.top
-            };
+                return JSON.parse(
+                    localStorage.getItem(
+                        this.storageKey
+                    ) || '{}'
+                );
+
+            } catch (error) {
+
+                return {};
+            }
+        }
+
+
+        saveState() {
+
+            const rect =
+                this.el.getBoundingClientRect();
 
             try {
 
                 localStorage.setItem(
-                    this.positionKey,
-                    JSON.stringify(position)
+                    this.storageKey,
+                    JSON.stringify({
+
+                        left:
+                            Math.round(rect.left),
+
+                        top:
+                            Math.round(rect.top),
+
+                        minimized:
+                            this.el.classList.contains(
+                                'is-minimized'
+                            ),
+
+                        width:
+                            this.window.offsetWidth
+                    })
                 );
 
-            } catch (err) {
+            } catch (error) {
 
-                console.warn(
-                    'Floating widget: kon positie niet opslaan.',
-                    err
-                );
+                /*
+                 * LocalStorage kan door
+                 * browserinstellingen geblokkeerd zijn.
+                 */
             }
         }
 
-
-        getStoredPosition() {
-
-            try {
-
-                const stored = localStorage.getItem(this.positionKey);
-
-                if (!stored) {
-                    return null;
-                }
-
-                const position = JSON.parse(stored);
-
-                if (
-                    typeof position.left !== 'number' ||
-                    typeof position.top !== 'number'
-                ) {
-                    return null;
-                }
-
-                return position;
-
-            } catch (err) {
-
-                return null;
-            }
-        }
-
-
-        saveMinimizedState(isMinimized) {
-
-            try {
-
-                localStorage.setItem(
-                    this.minimizedKey,
-                    isMinimized ? 'true' : 'false'
-                );
-
-            } catch (err) {
-
-                console.warn(
-                    'Floating widget: minimized state kon niet worden opgeslagen.',
-                    err
-                );
-            }
-        }
-
-
-        getStoredMinimizedState() {
-
-            try {
-
-                return localStorage.getItem(this.minimizedKey) === 'true';
-
-            } catch (err) {
-
-                return false;
-            }
-        }
-
-
-        hasBeenSeen() {
-
-            try {
-
-                return localStorage.getItem(this.seenKey) === 'true';
-
-            } catch (err) {
-
-                return false;
-            }
-        }
-
-
-        markAsSeen() {
-
-            try {
-
-                localStorage.setItem(this.seenKey, 'true');
-
-            } catch (err) {
-
-                // Ignore storage errors.
-            }
-        }
-
-
-        /* ============================================================
-           RESTORE STATE
-        ============================================================ */
 
         restoreState() {
 
-            const storedPosition = this.getStoredPosition();
-            const storedMinimized = this.getStoredMinimizedState();
-            const hasSeen = this.hasBeenSeen();
+            const state =
+                this.getState();
 
 
             /*
-             * MINIMIZED
-             *
-             * We intentionally ignore the stored X/Y here.
-             *
-             * A minimized widget always belongs in the bottom-right
-             * safe viewport area.
+             * Alleen video heeft een resize-breedte.
              */
-            if (storedMinimized) {
-
-                this.widget.classList.add('is-minimized');
-
-                /*
-                 * Let CSS/browser update the pill dimensions first.
-                 */
-                requestAnimationFrame(() => {
-
-                    this.positionMinimizedPill();
-
-                    this.markAsSeen();
-                });
-
-                return;
-            }
-
-
-            /*
-             * OPEN + PREVIOUS POSITION
-             */
-            if (storedPosition) {
-
-                this.widget.style.transform = 'none';
-
-                this.widget.style.left = `${storedPosition.left}px`;
-                this.widget.style.top = `${storedPosition.top}px`;
-
-                this.widget.style.right = 'auto';
-                this.widget.style.bottom = 'auto';
-
-                this.clampPosition();
-
-                this.markAsSeen();
-
-                return;
-            }
-
-
-            /*
-             * FIRST VISIT
-             *
-             * Start centered.
-             */
-            this.normalizePosition();
-
-            this.markAsSeen();
-        }
-
-
-        /* ============================================================
-           INITIAL CENTER POSITION
-        ============================================================ */
-
-        normalizePosition() {
-
-            if (!this.windowEl) return;
-
-            /*
-             * Make sure we are expanded.
-             */
-            this.widget.classList.remove('is-minimized');
-
-            const rect = this.windowEl.getBoundingClientRect();
-
-            const width = rect.width || 360;
-            const height = rect.height || 240;
-
-            const left = (window.innerWidth - width) / 2;
-            const top = (window.innerHeight - height) / 2;
-
-            this.widget.style.transform = 'none';
-
-            this.widget.style.left = `${left}px`;
-            this.widget.style.top = `${top}px`;
-
-            this.widget.style.right = 'auto';
-            this.widget.style.bottom = 'auto';
-
-            this.clampPosition();
-
-            /*
-             * Save the initial centered position.
-             */
-            this.savePosition();
-        }
-
-
-        /* ============================================================
-           DRAGGING
-        ============================================================ */
-
-        startDrag(e) {
-
-            if (e.button !== undefined && e.button !== 0) {
-                return;
-            }
-
-            if (this.widget.classList.contains('is-minimized')) {
-                return;
-            }
-
-            this.isDragging = true;
-            this.hasMoved = false;
-
-            this.dragTarget = 'header';
-
-            this.startX = e.clientX;
-            this.startY = e.clientY;
-
-            this.currentPointerId = e.pointerId;
-
-            const rect = this.widget.getBoundingClientRect();
-
-            this.initialLeft = rect.left;
-            this.initialTop = rect.top;
-
-            this.widget.classList.add('is-dragging');
-
-
-            /*
-             * Prevent iframe / video / other content from stealing
-             * pointer movement during dragging.
-             */
-            if (this.shield) {
-                this.shield.style.display = 'block';
-            }
-
-
-            try {
-
-                if (
-                    e.target.setPointerCapture &&
-                    e.pointerId !== undefined
-                ) {
-
-                    e.target.setPointerCapture(e.pointerId);
-                }
-
-            } catch (err) {
-                // Ignore pointer capture errors.
-            }
-
-
-            window.addEventListener(
-                'pointermove',
-                this.onPointerMove,
-                { passive: false }
-            );
-
-            window.addEventListener(
-                'pointerup',
-                this.onPointerUp
-            );
-
-            window.addEventListener(
-                'pointercancel',
-                this.onPointerUp
-            );
-
-            e.preventDefault();
-        }
-
-
-        onPointerMove(e) {
-
-            if (!this.isDragging) {
-                return;
-            }
-
-            const dx = e.clientX - this.startX;
-            const dy = e.clientY - this.startY;
-
-
-            /*
-             * Ignore tiny movements.
-             */
-            if (!this.hasMoved && Math.hypot(dx, dy) > 4) {
-
-                this.hasMoved = true;
-            }
-
-
-            if (!this.hasMoved) {
-                return;
-            }
-
-            e.preventDefault();
-
-
-            const newLeft = this.initialLeft + dx;
-            const newTop = this.initialTop + dy;
-
-            this.applyClampedPosition(
-                newLeft,
-                newTop
-            );
-        }
-
-
-        onPointerUp(e) {
-
-            if (!this.isDragging) {
-                return;
-            }
-
-            this.isDragging = false;
-
-            this.widget.classList.remove('is-dragging');
-
-
-            if (this.shield) {
-                this.shield.style.display = 'none';
-            }
-
-
-            window.removeEventListener(
-                'pointermove',
-                this.onPointerMove
-            );
-
-            window.removeEventListener(
-                'pointerup',
-                this.onPointerUp
-            );
-
-            window.removeEventListener(
-                'pointercancel',
-                this.onPointerUp
-            );
-
-
-            try {
-
-                if (
-                    e.target &&
-                    e.target.releasePointerCapture &&
-                    this.currentPointerId !== null
-                ) {
-
-                    e.target.releasePointerCapture(
-                        this.currentPointerId
-                    );
-                }
-
-            } catch (err) {
-                // Ignore.
-            }
-
-
-            /*
-             * Save the final position.
-             */
-            this.savePosition();
-
-            this.dragTarget = null;
-            this.currentPointerId = null;
-        }
-
-
-        /* ============================================================
-           RESIZING
-        ============================================================ */
-
-        startResize(e) {
-
-            if (e.button !== undefined && e.button !== 0) {
-                return;
-            }
-
-            if (!this.windowEl) {
-                return;
-            }
-
-            e.preventDefault();
-            e.stopPropagation();
-
-
-            this.isResizing = true;
-
-            this.startX = e.clientX;
-            this.startY = e.clientY;
-
-
-            const windowRect =
-                this.windowEl.getBoundingClientRect();
-
-            const widgetRect =
-                this.widget.getBoundingClientRect();
-
-
-            this.startWidth = windowRect.width;
-            this.startHeight = windowRect.height;
-
-            this.startLeft = widgetRect.left;
-
-
-            this.widget.classList.add('is-resizing');
-
-
-            if (this.shield) {
-                this.shield.style.display = 'block';
-            }
-
-
-            try {
-
-                if (
-                    e.target.setPointerCapture &&
-                    e.pointerId !== undefined
-                ) {
-
-                    e.target.setPointerCapture(e.pointerId);
-                }
-
-            } catch (err) {
-                // Ignore.
-            }
-
-
-            const onResizeMove = (ev) => {
-
-                if (!this.isResizing) {
-                    return;
-                }
-
-                ev.preventDefault();
-
-
-                /*
-                 * IMPORTANT:
-                 *
-                 * Resize grows toward the RIGHT.
-                 *
-                 * The LEFT edge stays fixed.
-                 */
-                const dx = ev.clientX - this.startX;
-
-                let newWidth =
-                    this.startWidth + dx;
-
-
-                const minWidth = 260;
-
-                const maxWidth =
-                    Math.min(
-                        680,
-                        window.innerWidth - this.startLeft - 12
-                    );
-
-
-                newWidth = Math.max(
-                    minWidth,
-                    Math.min(
-                        maxWidth,
-                        newWidth
-                    )
-                );
-
-
-                /*
-                 * Keep left edge exactly where it was.
-                 */
-                this.widget.style.left =
-                    `${this.startLeft}px`;
-
-
-                this.windowEl.style.width =
-                    `${newWidth}px`;
-
-
-                /*
-                 * Never let right edge leave viewport.
-                 */
-                const right =
-                    this.startLeft + newWidth;
-
-                if (right > window.innerWidth - 12) {
-
-                    this.windowEl.style.width =
-                        `${window.innerWidth - 12 - this.startLeft}px`;
-                }
-            };
-
-
-            const onResizeUp = (ev) => {
-
-                this.isResizing = false;
-
-                this.widget.classList.remove('is-resizing');
-
-
-                if (this.shield) {
-                    this.shield.style.display = 'none';
-                }
-
-
-                window.removeEventListener(
-                    'pointermove',
-                    onResizeMove
-                );
-
-                window.removeEventListener(
-                    'pointerup',
-                    onResizeUp
-                );
-
-                window.removeEventListener(
-                    'pointercancel',
-                    onResizeUp
-                );
-
-
-                try {
-
-                    if (
-                        e.target.releasePointerCapture &&
-                        e.pointerId !== undefined
-                    ) {
-
-                        e.target.releasePointerCapture(
-                            e.pointerId
-                        );
-                    }
-
-                } catch (err) {
-                    // Ignore.
-                }
-
-
-                /*
-                 * Make absolutely sure the widget is still visible.
-                 */
-                this.clampPosition();
-
-                this.savePosition();
-            };
-
-
-            window.addEventListener(
-                'pointermove',
-                onResizeMove,
-                { passive: false }
-            );
-
-            window.addEventListener(
-                'pointerup',
-                onResizeUp
-            );
-
-            window.addEventListener(
-                'pointercancel',
-                onResizeUp
-            );
-        }
-
-
-        /* ============================================================
-           ACTIVE ELEMENT
-        ============================================================ */
-
-        getActiveElement() {
 
             if (
-                this.widget.classList.contains(
+                state.width &&
+                this.id === 'floating-video-widget'
+            ) {
+
+                const width =
+                    this.limitVideoWidth(
+                        Number(state.width)
+                    );
+
+                this.window.style.width =
+                    width + 'px';
+            }
+
+
+            /*
+             * Minimaliseren terugzetten.
+             */
+
+            if (state.minimized) {
+
+                this.el.classList.add(
+                    'is-minimized'
+                );
+
+            } else {
+
+                this.el.classList.remove(
+                    'is-minimized'
+                );
+            }
+
+
+            /*
+             * Wachten tot browser de afmetingen
+             * van popup/pill kent.
+             */
+
+            requestAnimationFrame(() => {
+
+                if (
+                    Number.isFinite(
+                        Number(state.left)
+                    ) &&
+                    Number.isFinite(
+                        Number(state.top)
+                    )
+                ) {
+
+                    this.setPosition(
+                        Number(state.left),
+                        Number(state.top)
+                    );
+
+                } else {
+
+                    this.center();
+                }
+
+
+                this.keepInsideViewport();
+
+                this.saveState();
+            });
+        }
+
+
+        /*
+         * POPUP CENTREREN
+         */
+
+        center() {
+
+            const rect =
+                this.getActiveRect();
+
+            const left =
+                (window.innerWidth - rect.width) / 2;
+
+            const top =
+                (window.innerHeight - rect.height) / 2;
+
+            this.setPosition(
+                left,
+                top
+            );
+        }
+
+
+        /*
+         * Welke afmeting moet worden gebruikt?
+         */
+
+        getActiveRect() {
+
+            if (
+                this.el.classList.contains(
                     'is-minimized'
                 )
             ) {
 
-                return this.minPillEl || this.widget;
+                return this.pill.getBoundingClientRect();
+
             }
 
-            return this.windowEl || this.widget;
+            return this.window.getBoundingClientRect();
         }
 
 
-        /* ============================================================
-           CLAMP OPEN WINDOW
-        ============================================================ */
+        /*
+         * POSITIE INSTELLEN
+         */
 
-        applyClampedPosition(left, top) {
+        setPosition(left, top) {
 
-            const activeEl =
-                this.getActiveElement();
+            this.el.style.left =
+                Math.round(left) + 'px';
 
-            if (!activeEl) {
-                return;
-            }
+            this.el.style.top =
+                Math.round(top) + 'px';
 
+            this.el.style.right =
+                'auto';
+
+            this.el.style.bottom =
+                'auto';
+        }
+
+
+        /*
+         * BEGRENZINGEN VAN HET SCHERM
+         */
+
+        getBounds() {
 
             const rect =
-                activeEl.getBoundingClientRect();
+                this.getActiveRect();
 
-
-            const width =
-                rect.width ||
-                activeEl.offsetWidth ||
-                340;
-
-            const height =
-                rect.height ||
-                activeEl.offsetHeight ||
-                220;
-
+            const margin = 12;
 
             /*
-             * Safe viewport margins.
+             * Ruimte bovenaan voor eventuele
+             * vaste navigatie.
              */
-            const marginX = 12;
 
-            const marginTop = 52;
+            const topMargin = 52;
 
-            const marginBottom = 18;
+            const bottomMargin = 12;
+
+            return {
+
+                minLeft:
+                    margin,
+
+                maxLeft:
+                    Math.max(
+                        margin,
+                        window.innerWidth -
+                        rect.width -
+                        margin
+                    ),
+
+                minTop:
+                    topMargin,
+
+                maxTop:
+                    Math.max(
+                        topMargin,
+                        window.innerHeight -
+                        rect.height -
+                        bottomMargin
+                    )
+            };
+        }
 
 
-            /*
-             * Maximum allowed coordinates.
-             */
-            const minX = marginX;
+        /*
+         * ZORG DAT POPUP BINNEN SCHERM BLIJFT
+         */
 
-            const maxX =
-                Math.max(
-                    minX,
-                    window.innerWidth -
-                    width -
-                    marginX
+        keepInsideViewport() {
+
+            const rect =
+                this.el.getBoundingClientRect();
+
+            const bounds =
+                this.getBounds();
+
+
+            const currentLeft =
+                parseFloat(
+                    this.el.style.left
+                );
+
+            const currentTop =
+                parseFloat(
+                    this.el.style.top
                 );
 
 
-            const minY = marginTop;
+            const left =
+                Number.isFinite(currentLeft)
+                    ? currentLeft
+                    : rect.left;
 
-            const maxY =
+            const top =
+                Number.isFinite(currentTop)
+                    ? currentTop
+                    : rect.top;
+
+
+            const safeLeft =
                 Math.max(
-                    minY,
-                    window.innerHeight -
-                    height -
-                    marginBottom
-                );
-
-
-            const clampedLeft =
-                Math.max(
-                    minX,
+                    bounds.minLeft,
                     Math.min(
                         left,
-                        maxX
+                        bounds.maxLeft
                     )
                 );
 
 
-            const clampedTop =
+            const safeTop =
                 Math.max(
-                    minY,
+                    bounds.minTop,
                     Math.min(
                         top,
-                        maxY
+                        bounds.maxTop
                     )
                 );
 
 
-            this.widget.style.left =
-                `${clampedLeft}px`;
-
-            this.widget.style.top =
-                `${clampedTop}px`;
-
-            this.widget.style.right = 'auto';
-            this.widget.style.bottom = 'auto';
-
-            this.widget.style.transform = 'none';
-
-
-            /*
-             * Set transform origin based on current location.
-             */
-            const isBottomHalf =
-                (
-                    clampedTop +
-                    height / 2
-                ) > (
-                    window.innerHeight / 2
-                );
-
-
-            const isRightHalf =
-                (
-                    clampedLeft +
-                    width / 2
-                ) > (
-                    window.innerWidth / 2
-                );
-
-
-            const originY =
-                isBottomHalf
-                    ? 'bottom'
-                    : 'top';
-
-            const originX =
-                isRightHalf
-                    ? 'right'
-                    : 'left';
-
-
-            if (this.windowEl) {
-
-                this.windowEl.style.transformOrigin =
-                    `${originY} ${originX}`;
-            }
-
-
-            if (this.minPillEl) {
-
-                this.minPillEl.style.transformOrigin =
-                    `${originY} ${originX}`;
-            }
-        }
-
-
-        clampPosition() {
-
-            const rect =
-                this.widget.getBoundingClientRect();
-
-
-            let currentLeft =
-                parseFloat(
-                    this.widget.style.left
-                );
-
-
-            let currentTop =
-                parseFloat(
-                    this.widget.style.top
-                );
-
-
-            /*
-             * If no explicit value exists,
-             * use the current viewport coordinates.
-             */
-            if (Number.isNaN(currentLeft)) {
-                currentLeft = rect.left;
-            }
-
-            if (Number.isNaN(currentTop)) {
-                currentTop = rect.top;
-            }
-
-
-            this.applyClampedPosition(
-                currentLeft,
-                currentTop
+            this.setPosition(
+                safeLeft,
+                safeTop
             );
         }
 
 
-        /* ============================================================
-           MINIMIZE
-        ============================================================ */
+        /*
+         * DRAG START
+         */
+
+        beginDrag(event, type) {
+
+            if (this.resizing) {
+                return;
+            }
+
+
+            this.dragging = true;
+
+            this.moved = false;
+
+            this.dragType = type;
+
+
+            this.pointerStartX =
+                event.clientX;
+
+            this.pointerStartY =
+                event.clientY;
+
+
+            const rect =
+                this.el.getBoundingClientRect();
+
+
+            this.elementStartLeft =
+                rect.left;
+
+            this.elementStartTop =
+                rect.top;
+
+
+            this.el.classList.add(
+                'is-dragging'
+            );
+
+
+            if (this.dragShield) {
+
+                this.dragShield.style.display =
+                    'block';
+            }
+
+
+            window.addEventListener(
+                'pointermove',
+                this.moveHandler,
+                {
+                    passive: false
+                }
+            );
+
+            window.addEventListener(
+                'pointerup',
+                this.upHandler
+            );
+
+            window.addEventListener(
+                'pointercancel',
+                this.upHandler
+            );
+
+
+            try {
+
+                event.target.setPointerCapture?.(
+                    event.pointerId
+                );
+
+            } catch (error) {}
+
+
+            event.preventDefault();
+        }
+
+
+        /*
+         * DRAG MOVE
+         */
+
+        onPointerMove(event) {
+
+            if (!this.dragging) {
+                return;
+            }
+
+
+            const dx =
+                event.clientX -
+                this.pointerStartX;
+
+            const dy =
+                event.clientY -
+                this.pointerStartY;
+
+
+            /*
+             * Een kleine muisbeweging telt
+             * nog als klik.
+             */
+
+            if (
+                !this.moved &&
+                Math.hypot(dx, dy) >= 4
+            ) {
+
+                this.moved = true;
+            }
+
+
+            if (!this.moved) {
+                return;
+            }
+
+
+            event.preventDefault();
+
+
+            const bounds =
+                this.getBounds();
+
+
+            const left =
+                Math.max(
+                    bounds.minLeft,
+                    Math.min(
+                        this.elementStartLeft + dx,
+                        bounds.maxLeft
+                    )
+                );
+
+
+            const top =
+                Math.max(
+                    bounds.minTop,
+                    Math.min(
+                        this.elementStartTop + dy,
+                        bounds.maxTop
+                    )
+                );
+
+
+            this.setPosition(
+                left,
+                top
+            );
+        }
+
+
+        /*
+         * DRAG STOP
+         */
+
+        onPointerUp() {
+
+            if (!this.dragging) {
+                return;
+            }
+
+
+            const wasPill =
+                this.dragType === 'pill';
+
+            const wasClick =
+                !this.moved;
+
+
+            this.dragging = false;
+
+            this.el.classList.remove(
+                'is-dragging'
+            );
+
+
+            if (this.dragShield) {
+
+                this.dragShield.style.display =
+                    'none';
+            }
+
+
+            window.removeEventListener(
+                'pointermove',
+                this.moveHandler
+            );
+
+            window.removeEventListener(
+                'pointerup',
+                this.upHandler
+            );
+
+            window.removeEventListener(
+                'pointercancel',
+                this.upHandler
+            );
+
+
+            /*
+             * Klik op geminimaliseerde pill
+             * = popup openen.
+             */
+
+            if (
+                wasPill &&
+                wasClick
+            ) {
+
+                this.expand();
+
+            } else {
+
+                this.saveState();
+            }
+
+
+            this.dragType = null;
+        }
+
+
+        /*
+         * RESIZE START
+         */
+
+        beginResize(event) {
+
+            /*
+             * Alleen video mag resizen.
+             */
+
+            if (
+                this.id !==
+                'floating-video-widget'
+            ) {
+                return;
+            }
+
+
+            if (
+                event.button !== undefined &&
+                event.button !== 0
+            ) {
+                return;
+            }
+
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+
+            this.resizing = true;
+
+
+            this.resizeStartX =
+                event.clientX;
+
+
+            this.resizeStartWidth =
+                this.window.getBoundingClientRect().width;
+
+
+            /*
+             * Dit is de vaste linkerzijde.
+             */
+
+            this.resizeStartLeft =
+                this.el.getBoundingClientRect().left;
+
+
+            this.el.classList.add(
+                'is-resizing'
+            );
+
+
+            if (this.dragShield) {
+
+                this.dragShield.style.display =
+                    'block';
+            }
+
+
+            window.addEventListener(
+                'pointermove',
+                this.resizeMoveHandler,
+                {
+                    passive: false
+                }
+            );
+
+            window.addEventListener(
+                'pointerup',
+                this.resizeUpHandler
+            );
+
+            window.addEventListener(
+                'pointercancel',
+                this.resizeUpHandler
+            );
+        }
+
+
+        /*
+         * RESIZE MOVE
+         *
+         * Naar RECHTS slepen = groter.
+         *
+         * De linkerzijde verandert NIET.
+         */
+
+        onResizeMove(event) {
+
+            if (!this.resizing) {
+                return;
+            }
+
+
+            event.preventDefault();
+
+
+            const delta =
+                event.clientX -
+                this.resizeStartX;
+
+
+            const newWidth =
+                this.limitVideoWidth(
+                    this.resizeStartWidth +
+                    delta
+                );
+
+
+            this.window.style.width =
+                newWidth + 'px';
+
+
+            /*
+             * Linkerkant exact op zijn
+             * oorspronkelijke plaats houden.
+             */
+
+            this.el.style.left =
+                Math.round(
+                    this.resizeStartLeft
+                ) + 'px';
+        }
+
+
+        /*
+         * RESIZE STOP
+         */
+
+        onResizeUp() {
+
+            if (!this.resizing) {
+                return;
+            }
+
+
+            this.resizing = false;
+
+
+            this.el.classList.remove(
+                'is-resizing'
+            );
+
+
+            if (this.dragShield) {
+
+                this.dragShield.style.display =
+                    'none';
+            }
+
+
+            window.removeEventListener(
+                'pointermove',
+                this.resizeMoveHandler
+            );
+
+            window.removeEventListener(
+                'pointerup',
+                this.resizeUpHandler
+            );
+
+            window.removeEventListener(
+                'pointercancel',
+                this.resizeUpHandler
+            );
+
+
+            this.keepInsideViewport();
+
+            this.saveState();
+        }
+
+
+        /*
+         * MAXIMALE VIDEOBREEDTE
+         */
+
+        limitVideoWidth(width) {
+
+            const minimum = 260;
+
+            const margin = 12;
+
+
+            const currentLeft =
+                Number.isFinite(
+                    this.resizeStartLeft
+                )
+                    ? this.resizeStartLeft
+                    : this.el.getBoundingClientRect().left;
+
+
+            const maximum =
+                Math.max(
+                    minimum,
+                    window.innerWidth -
+                    currentLeft -
+                    margin
+                );
+
+
+            return Math.round(
+                Math.max(
+                    minimum,
+                    Math.min(
+                        width,
+                        maximum,
+                        900
+                    )
+                )
+            );
+        }
+
+
+        /*
+         * MINIMALISEREN
+         */
 
         minimize() {
 
             if (
-                this.widget.classList.contains(
+                this.el.classList.contains(
                     'is-minimized'
                 )
             ) {
@@ -986,161 +1003,79 @@
             }
 
 
-            /*
-             * Save the current open position BEFORE minimizing.
-             *
-             * This means opening later can return to the same
-             * general location.
-             */
-            this.savePosition();
+            const windowRect =
+                this.window.getBoundingClientRect();
 
-
-            /*
-             * Add minimized class first.
-             *
-             * The CSS then hides the large window and displays
-             * the pill.
-             */
-            this.widget.classList.add(
-                'is-minimized'
-            );
-
-
-            this.saveMinimizedState(true);
-
-
-            /*
-             * Wait until the browser has recalculated the pill's
-             * actual dimensions.
-             */
-            requestAnimationFrame(() => {
-
-                requestAnimationFrame(() => {
-
-                    this.positionMinimizedPill();
-                });
-            });
-        }
-
-
-        /* ============================================================
-           MINIMIZED POSITION
-        ============================================================ */
-
-        positionMinimizedPill() {
-
-            if (!this.minPillEl) {
-                return;
-            }
-
-
-            /*
-             * The pill is now visible.
-             */
-            this.widget.classList.add(
-                'is-minimized'
-            );
-
-
-            /*
-             * Get the ACTUAL pill dimensions.
-             *
-             * This is the important fix.
-             *
-             * We do NOT calculate using the large window.
-             */
             const pillRect =
-                this.minPillEl.getBoundingClientRect();
-
-
-            const pillWidth =
-                pillRect.width ||
-                this.minPillEl.offsetWidth ||
-                170;
-
-
-            const pillHeight =
-                pillRect.height ||
-                this.minPillEl.offsetHeight ||
-                42;
+                this.pill.getBoundingClientRect();
 
 
             /*
-             * Safe distance from viewport edges.
+             * Bepalen aan welke kant
+             * de popup staat.
              */
-            const marginRight = 20;
-            const marginBottom = 20;
+
+            const centerX =
+                windowRect.left +
+                windowRect.width / 2;
+
+            const centerY =
+                windowRect.top +
+                windowRect.height / 2;
+
+
+            const rightSide =
+                centerX >
+                window.innerWidth / 2;
+
+            const bottomSide =
+                centerY >
+                window.innerHeight / 2;
 
 
             /*
-             * ALWAYS bottom-right.
-             *
-             * This means the minimized widget can never
-             * disappear somewhere inside/outside a website column.
+             * Nieuwe positie van de pill.
              */
-            let left =
-                window.innerWidth -
-                pillWidth -
-                marginRight;
+
+            const left =
+                rightSide
+                    ? windowRect.right -
+                      pillRect.width
+                    : windowRect.left;
 
 
-            let top =
-                window.innerHeight -
-                pillHeight -
-                marginBottom;
+            const top =
+                bottomSide
+                    ? windowRect.bottom -
+                      pillRect.height
+                    : windowRect.top;
 
 
-            /*
-             * Hard safety clamp.
-             */
-            left = Math.max(
-                0,
-                Math.min(
-                    left,
-                    window.innerWidth - pillWidth
-                )
+            this.el.classList.add(
+                'is-minimized'
             );
 
 
-            top = Math.max(
-                0,
-                Math.min(
-                    top,
-                    window.innerHeight - pillHeight
-                )
+            this.setPosition(
+                left,
+                top
             );
 
 
-            /*
-             * Explicitly use viewport coordinates.
-             */
-            this.widget.style.transform = 'none';
+            this.keepInsideViewport();
 
-            this.widget.style.left =
-                `${left}px`;
-
-            this.widget.style.top =
-                `${top}px`;
-
-            this.widget.style.right = 'auto';
-            this.widget.style.bottom = 'auto';
-
-
-            /*
-             * Save the safe minimized position too.
-             */
-            this.savePosition();
+            this.saveState();
         }
 
 
-        /* ============================================================
-           EXPAND
-        ============================================================ */
+        /*
+         * OPENEN
+         */
 
         expand() {
 
             if (
-                !this.widget.classList.contains(
+                !this.el.classList.contains(
                     'is-minimized'
                 )
             ) {
@@ -1148,256 +1083,157 @@
             }
 
 
-            /*
-             * Remember where the pill is BEFORE removing
-             * minimized state.
-             */
             const pillRect =
-                this.minPillEl
-                    ? this.minPillEl.getBoundingClientRect()
-                    : this.widget.getBoundingClientRect();
+                this.pill.getBoundingClientRect();
 
 
-            const pillCenterX =
+            const centerX =
                 pillRect.left +
                 pillRect.width / 2;
 
-            const pillCenterY =
+            const centerY =
                 pillRect.top +
                 pillRect.height / 2;
 
 
+            const rightSide =
+                centerX >
+                window.innerWidth / 2;
+
+            const bottomSide =
+                centerY >
+                window.innerHeight / 2;
+
+
             /*
-             * Remove minimized state.
+             * Eerst popup zichtbaar maken
+             * zodat we zijn echte grootte kennen.
              */
-            this.widget.classList.remove(
+
+            this.el.classList.remove(
                 'is-minimized'
             );
 
 
-            this.saveMinimizedState(false);
+            const windowRect =
+                this.window.getBoundingClientRect();
 
 
             /*
-             * Let the large window become measurable.
+             * Popup opent vanuit dezelfde hoek
+             * als waar de pill stond.
              */
-            requestAnimationFrame(() => {
 
-                const windowRect =
-                    this.windowEl
-                        ? this.windowEl.getBoundingClientRect()
-                        : {
-                            width: 360,
-                            height: 240
-                        };
+            const left =
+                rightSide
+                    ? pillRect.right -
+                      windowRect.width
+                    : pillRect.left;
 
 
-                const windowWidth =
-                    windowRect.width ||
-                    360;
-
-                const windowHeight =
-                    windowRect.height ||
-                    240;
+            const top =
+                bottomSide
+                    ? pillRect.bottom -
+                      windowRect.height
+                    : pillRect.top;
 
 
-                /*
-                 * Decide which corner the pill was closest to.
-                 */
-                const isRightHalf =
-                    pillCenterX >
-                    window.innerWidth / 2;
+            this.setPosition(
+                left,
+                top
+            );
 
 
-                const isBottomHalf =
-                    pillCenterY >
-                    window.innerHeight / 2;
+            this.keepInsideViewport();
 
-
-                let targetLeft;
-
-                let targetTop;
-
-
-                /*
-                 * Keep the window visually connected to
-                 * the minimized pill.
-                 */
-                if (isRightHalf) {
-
-                    targetLeft =
-                        pillRect.right -
-                        windowWidth;
-
-                } else {
-
-                    targetLeft =
-                        pillRect.left;
-                }
-
-
-                if (isBottomHalf) {
-
-                    targetTop =
-                        pillRect.bottom -
-                        windowHeight;
-
-                } else {
-
-                    targetTop =
-                        pillRect.top;
-                }
-
-
-                this.widget.style.transform = 'none';
-
-
-                this.applyClampedPosition(
-                    targetLeft,
-                    targetTop
-                );
-
-
-                /*
-                 * Save the newly opened position.
-                 */
-                this.savePosition();
-            });
+            this.saveState();
         }
     }
 
 
-    /* ================================================================
-       INITIALIZE WIDGETS
-    ================================================================ */
+    /*
+     * WORKSHOP FORMULIER
+     */
 
-    document.addEventListener(
-        'DOMContentLoaded',
-        () => {
-
-            /*
-             * VIDEO WIDGET
-             */
-            const videoWidgetEl =
-                document.getElementById(
-                    'floating-video-widget'
-                );
-
-
-            if (videoWidgetEl) {
-
-                new DraggableWidget(
-                    videoWidgetEl
-                );
-            }
-
-
-            /*
-             * BOOKING WIDGET
-             */
-            const bookingWidgetEl =
-                document.getElementById(
-                    'floating-booking-widget'
-                );
-
-
-            if (bookingWidgetEl) {
-
-                new DraggableWidget(
-                    bookingWidgetEl
-                );
-
-                setupBookingForm(
-                    bookingWidgetEl
-                );
-            }
-        }
-    );
-
-
-    /* ================================================================
-       BOOKING FORM
-    ================================================================ */
-
-    function setupBookingForm(widgetEl) {
+    function setupBookingForm(widget) {
 
         const form =
-            widgetEl.querySelector(
+            widget.querySelector(
                 '.booking-form'
             );
 
-
-        const feedbackEl =
-            widgetEl.querySelector(
+        const feedback =
+            widget.querySelector(
                 '.booking-feedback'
             );
 
-
-        const copyBtn =
-            widgetEl.querySelector(
+        const copyButton =
+            widget.querySelector(
                 '.booking-copy-btn'
             );
 
-
-        const resetBtn =
-            widgetEl.querySelector(
+        const resetButton =
+            widget.querySelector(
                 '.booking-reset-btn'
             );
 
-
-        const moreInfoBtn =
-            widgetEl.querySelector(
+        const moreInfoButton =
+            widget.querySelector(
                 '.booking-more-info-btn'
             );
 
 
+        let lastBookingText = '';
+
+
         /*
-         * "Meer informatie" on workshop page.
+         * MEER INFORMATIE
          */
-        if (
-            moreInfoBtn &&
-            (
-                window.location.pathname.endsWith(
-                    'workshop'
-                ) ||
-                window.location.pathname.endsWith(
-                    'workshop.html'
-                )
-            )
-        ) {
 
-            moreInfoBtn.addEventListener(
-                'click',
-                (e) => {
+        if (moreInfoButton) {
 
-                    const infoLink =
-                        document.querySelector(
-                            '#info-link a'
-                        );
+            const path =
+                window.location.pathname
+                    .toLowerCase();
 
 
-                    const columnInfo =
-                        document.querySelector(
-                            '.column-info'
-                        );
+            if (
+                path.endsWith('/workshop') ||
+                path.endsWith('/workshop.html')
+            ) {
+
+                moreInfoButton.addEventListener(
+                    'click',
+                    (event) => {
+
+                        const infoLink =
+                            document.querySelector(
+                                '#info-link a'
+                            );
+
+                        const infoColumn =
+                            document.querySelector(
+                                '.column-info'
+                            );
 
 
-                    if (infoLink) {
+                        if (infoLink) {
 
-                        e.preventDefault();
+                            event.preventDefault();
 
-                        infoLink.click();
+                            infoLink.click();
 
-                    } else if (columnInfo) {
+                        } else if (infoColumn) {
 
-                        e.preventDefault();
+                            event.preventDefault();
 
-                        columnInfo.scrollIntoView({
-                            behavior: 'smooth'
-                        });
+                            infoColumn.scrollIntoView({
+                                behavior: 'smooth'
+                            });
+                        }
                     }
-                }
-            );
+                );
+            }
         }
 
 
@@ -1406,74 +1242,73 @@
         }
 
 
-        let lastBookingData = null;
-
-
         /*
-         * Submit booking form.
+         * FORMULIER VERSTUREN
          */
+
         form.addEventListener(
             'submit',
-            (e) => {
+            (event) => {
 
-                e.preventDefault();
+                event.preventDefault();
+
+
+                const value =
+                    (selector) => {
+
+                        const field =
+                            form.querySelector(
+                                selector
+                            );
+
+                        return field
+                            ? field.value.trim()
+                            : '';
+                    };
 
 
                 const name =
-                    (
-                        form.querySelector(
-                            '#booking-name'
-                        )?.value || ''
-                    ).trim();
-
+                    value('#booking-name');
 
                 const email =
-                    (
-                        form.querySelector(
-                            '#booking-email'
-                        )?.value || ''
-                    ).trim();
-
+                    value('#booking-email');
 
                 const phone =
-                    (
-                        form.querySelector(
-                            '#booking-phone'
-                        )?.value || ''
-                    ).trim();
-
+                    value('#booking-phone');
 
                 const date =
-                    (
-                        form.querySelector(
-                            '#booking-date'
-                        )?.value || ''
-                    ).trim();
-
+                    value('#booking-date');
 
                 const participants =
-                    (
-                        form.querySelector(
-                            '#booking-participants'
-                        )?.value || ''
-                    ).trim();
+                    value(
+                        '#booking-participants'
+                    );
+
+
+                const typeField =
+                    form.querySelector(
+                        '#booking-type'
+                    );
 
 
                 const groupType =
-                    form.querySelector(
-                        '#booking-type'
-                    )?.value || '';
+                    typeField
+                        ? typeField.value
+                        : '';
 
 
-                const notes =
-                    (
-                        form.querySelector(
-                            '#booking-message'
-                        )?.value || ''
-                    ).trim();
+                const message =
+                    value('#booking-message');
 
 
-                if (!name || !email) {
+                /*
+                 * Naam en e-mail verplicht.
+                 */
+
+                if (
+                    !name ||
+                    !email
+                ) {
 
                     alert(
                         'Vul alstublieft minimaal je naam en e-mailadres in.'
@@ -1483,74 +1318,118 @@
                 }
 
 
-                const formattedDetails = [
+                /*
+                 * Aanvraagtekst maken.
+                 */
+
+                lastBookingText = [
+
                     'Beste Franco,',
+
                     '',
+
                     "Graag wil ik een aanvraag doen voor de Mobiele Workshop 'Wat wil jij schreeuwen tegen de wereld?'.",
+
                     '',
+
                     'Aanvraaggegevens:',
-                    `- Naam: ${name}`,
-                    `- E-mail: ${email}`,
-                    `- Telefoonnummer: ${phone || 'Niet opgegeven'}`,
-                    `- Gewenste datum / periode: ${date || 'In overleg'}`,
-                    `- Aantal deelnemers: ${participants || 'Niet opgegeven'}`,
-                    `- Type groep / context: ${groupType || 'Niet gespecificeerd'}`,
+
+                    '- Naam: ' +
+                        name,
+
+                    '- E-mail: ' +
+                        email,
+
+                    '- Telefoonnummer: ' +
+                        (
+                            phone ||
+                            'Niet opgegeven'
+                        ),
+
+                    '- Gewenste datum / periode: ' +
+                        (
+                            date ||
+                            'In overleg'
+                        ),
+
+                    '- Aantal deelnemers: ' +
+                        (
+                            participants ||
+                            'Niet opgegeven'
+                        ),
+
+                    '- Type groep / context: ' +
+                        (
+                            groupType ||
+                            'Niet gespecificeerd'
+                        ),
+
                     '',
+
                     'Opmerkingen / wensen:',
-                    notes || 'Geen extra opmerkingen gegeven.',
+
+                    message ||
+                        'Geen extra opmerkingen gegeven.',
+
                     '',
+
                     'Met vriendelijke groet,',
+
                     name
+
                 ].join('\n');
 
 
-                lastBookingData =
-                    formattedDetails;
-
-
-                const mailSubject =
+                const subject =
                     encodeURIComponent(
-                        `Aanvraag Mobiele Workshop - ${name}`
+                        'Aanvraag Mobiele Workshop - ' +
+                        name
                     );
 
 
-                const mailBody =
+                const body =
                     encodeURIComponent(
-                        formattedDetails
+                        lastBookingText
                     );
-
-
-                const mailtoUri =
-                    `mailto:francosoolsma@gmail.com?subject=${mailSubject}&body=${mailBody}`;
 
 
                 /*
-                 * Open mail client.
+                 * E-mailprogramma openen.
                  */
+
                 window.location.href =
-                    mailtoUri;
+                    'mailto:francosoolsma@gmail.com' +
+                    '?subject=' +
+                    subject +
+                    '&body=' +
+                    body;
 
 
                 /*
-                 * Feedback.
+                 * Bevestiging tonen.
                  */
-                if (feedbackEl) {
 
-                    feedbackEl.classList.add(
+                if (feedback) {
+
+                    feedback.classList.add(
                         'show'
                     );
 
 
-                    const feedbackSummary =
-                        feedbackEl.querySelector(
+                    const summary =
+                        feedback.querySelector(
                             '.booking-feedback-summary'
                         );
 
 
-                    if (feedbackSummary) {
+                    if (summary) {
 
-                        feedbackSummary.textContent =
-                            `Aanvraag voor ${name} (${email}) klaargezet in je e-mailprogramma.`;
+                        summary.textContent =
+                            'Aanvraag voor ' +
+                            name +
+                            ' (' +
+                            email +
+                            ') klaargezet in je e-mailprogramma.';
                     }
                 }
             }
@@ -1558,73 +1437,142 @@
 
 
         /*
-         * Copy booking text.
+         * AANVRAAG KOPIËREN
          */
-        if (copyBtn) {
 
-            copyBtn.addEventListener(
+        if (copyButton) {
+
+            copyButton.addEventListener(
                 'click',
-                () => {
+                async () => {
 
-                    if (!lastBookingData) {
+                    if (!lastBookingText) {
                         return;
                     }
 
 
-                    navigator.clipboard
-                        .writeText(
-                            lastBookingData
-                        )
-                        .then(() => {
+                    try {
 
-                            const originalText =
-                                copyBtn.textContent;
+                        await navigator.clipboard.writeText(
+                            lastBookingText
+                        );
 
 
-                            copyBtn.textContent =
-                                '✓ Gekopieerd!';
+                        const oldText =
+                            copyButton.textContent;
 
 
-                            setTimeout(() => {
+                        copyButton.textContent =
+                            '✓ Gekopieerd!';
 
-                                copyBtn.textContent =
-                                    originalText;
 
-                            }, 2200);
+                        setTimeout(() => {
 
-                        })
-                        .catch(() => {
+                            copyButton.textContent =
+                                oldText;
 
-                            alert(
-                                'Kon tekst niet automatisch kopiëren. Selecteer en kopieer handmatig.'
-                            );
-                        });
+                        }, 2200);
+
+
+                    } catch (error) {
+
+                        alert(
+                            'Kopiëren is niet gelukt. Kopieer de aanvraagtekst handmatig.'
+                        );
+                    }
                 }
             );
         }
 
 
         /*
-         * Reset booking form.
+         * NIEUWE AANVRAAG
          */
-        if (resetBtn) {
 
-            resetBtn.addEventListener(
+        if (resetButton) {
+
+            resetButton.addEventListener(
                 'click',
                 () => {
 
                     form.reset();
 
 
-                    if (feedbackEl) {
+                    if (feedback) {
 
-                        feedbackEl.classList.remove(
+                        feedback.classList.remove(
                             'show'
                         );
                     }
+
+
+                    lastBookingText = '';
                 }
             );
         }
+    }
+
+
+    /*
+     * ALLES INITIALISEREN
+     */
+
+    function init() {
+
+        const video =
+            document.getElementById(
+                'floating-video-widget'
+            );
+
+
+        const booking =
+            document.getElementById(
+                'floating-booking-widget'
+            );
+
+
+        /*
+         * Video
+         */
+
+        if (video) {
+
+            new FloatingWidget(video);
+        }
+
+
+        /*
+         * Workshop
+         */
+
+        if (booking) {
+
+            new FloatingWidget(booking);
+
+            setupBookingForm(
+                booking
+            );
+        }
+    }
+
+
+    /*
+     * Wachten tot HTML klaar is.
+     */
+
+    if (
+        document.readyState ===
+        'loading'
+    ) {
+
+        document.addEventListener(
+            'DOMContentLoaded',
+            init
+        );
+
+    } else {
+
+        init();
     }
 
 })();
