@@ -350,25 +350,43 @@
 
             requestAnimationFrame(() => {
 
-                if (
-                    Number.isFinite(
-                        Number(state.left)
-                    ) &&
-                    Number.isFinite(
-                        Number(state.top)
-                    )
-                ) {
+                /*
+                 * Als de widget geminimaliseerd is,
+                 * altijd rechtsonder plaatsen.
+                 */
+
+                if (state.minimized) {
+
+                    const pillRect =
+                        this.pill.getBoundingClientRect();
+
+                    const margin = 20;
+
+                    const left =
+                        window.innerWidth -
+                        pillRect.width -
+                        margin;
+
+                    const top =
+                        window.innerHeight -
+                        pillRect.height -
+                        margin;
 
                     this.setPosition(
-                        Number(state.left),
-                        Number(state.top)
+                        left,
+                        top
                     );
 
                 } else {
 
+                    /*
+                     * Als de popup normaal geopend is,
+                     * altijd op de oorspronkelijke
+                     * spawnpositie in het midden.
+                     */
+
                     this.center();
                 }
-
 
                 this.keepInsideViewport();
 
@@ -992,53 +1010,62 @@
          * MINIMALISEREN
          */
 
- expand() {
+        minimize() {
 
-    if (
-        !this.el.classList.contains(
-            'is-minimized'
-        )
-    ) {
-        return;
-    }
+            if (
+                this.el.classList.contains(
+                    'is-minimized'
+                )
+            ) {
+                return;
+            }
 
-    /*
-     * Eerst maximaliseren zodat de popup
-     * zijn echte afmetingen krijgt.
-     */
+            /*
+             * Eerst de popup minimaliseren,
+             * zodat de pill zijn echte afmetingen
+             * krijgt.
+             */
 
-    this.el.classList.remove(
-        'is-minimized'
-    );
+            this.el.classList.add(
+                'is-minimized'
+            );
 
-    /*
-     * Altijd exact in het midden.
-     */
+            /*
+             * De geminimaliseerde pill staat
+             * altijd rechtsonder.
+             */
 
-    const windowRect =
-        this.window.getBoundingClientRect();
+            requestAnimationFrame(() => {
 
-    const left =
-        (window.innerWidth -
-            windowRect.width) / 2;
+                const pillRect =
+                    this.pill.getBoundingClientRect();
 
-    const top =
-        (window.innerHeight -
-            windowRect.height) / 2;
+                const margin = 20;
 
-    this.setPosition(
-        left,
-        top
-    );
+                const left =
+                    window.innerWidth -
+                    pillRect.width -
+                    margin;
 
-    this.keepInsideViewport();
+                const top =
+                    window.innerHeight -
+                    pillRect.height -
+                    margin;
 
-    this.saveState();
-}
+                this.setPosition(
+                    left,
+                    top
+                );
+
+                this.keepInsideViewport();
+
+                this.saveState();
+            });
+        }
 
 
         /*
-         * OPENEN
+         * OPENEN / MAXIMALISEREN
          */
 
         expand() {
@@ -1051,71 +1078,31 @@
                 return;
             }
 
-
-            const pillRect =
-                this.pill.getBoundingClientRect();
-
-
-            const centerX =
-                pillRect.left +
-                pillRect.width / 2;
-
-            const centerY =
-                pillRect.top +
-                pillRect.height / 2;
-
-
-            const rightSide =
-                centerX >
-                window.innerWidth / 2;
-
-            const bottomSide =
-                centerY >
-                window.innerHeight / 2;
-
-
             /*
-             * Eerst popup zichtbaar maken
-             * zodat we zijn echte grootte kennen.
+             * Popup weer zichtbaar maken.
              */
 
             this.el.classList.remove(
                 'is-minimized'
             );
 
-
-            const windowRect =
-                this.window.getBoundingClientRect();
-
-
             /*
-             * Popup opent vanuit dezelfde hoek
-             * als waar de pill stond.
+             * Altijd terug naar de
+             * oorspronkelijke spawnpositie:
+             * exact in het midden van het scherm.
+             *
+             * We gebruiken bewust NIET de positie
+             * van de geminimaliseerde pill.
              */
 
-            const left =
-                rightSide
-                    ? pillRect.right -
-                      windowRect.width
-                    : pillRect.left;
+            requestAnimationFrame(() => {
 
+                this.center();
 
-            const top =
-                bottomSide
-                    ? pillRect.bottom -
-                      windowRect.height
-                    : pillRect.top;
+                this.keepInsideViewport();
 
-
-            this.setPosition(
-                left,
-                top
-            );
-
-
-            this.keepInsideViewport();
-
-            this.saveState();
+                this.saveState();
+            });
         }
     }
 
