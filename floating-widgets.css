@@ -19,6 +19,18 @@
     transform: translate(-50%, -50%);
 }
 
+.floating-widget.is-animating {
+    transition: left 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+                top 0.38s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.floating-widget.is-dragging,
+.floating-widget.is-resizing,
+.floating-widget.is-dragging .floating-window,
+.floating-widget.is-resizing .floating-window {
+    transition: none !important;
+}
+
 /* Floating Window Container - 100% 4kant, 1px lijn */
 .floating-widget .floating-window {
     width: 360px;
@@ -31,12 +43,30 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    transition: opacity 0.2s ease, transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.2s;
+    transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 0.3s ease;
     transform-origin: center center;
     opacity: 1;
     visibility: visible;
     transform: scale(1);
     pointer-events: auto;
+}
+
+/* Openingsanimatie voor popup */
+@keyframes floatPopupEntrance {
+    0% {
+        opacity: 0;
+        transform: scale(0.92) translateY(16px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.floating-widget:not(.is-minimized) .floating-window.popup-enter {
+    animation: floatPopupEntrance 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 /* Booking popup: iets breder zodat ‘Wat wil jij schreeuwen tegen de wereld?’ op 1 regel past */
@@ -81,12 +111,15 @@
 }
 
 #floating-booking-widget .floating-header .floating-btn-ctrl {
-    color: #ffffff;
+    background: transparent !important;
+    color: #ffffff !important;
 }
 
-#floating-booking-widget .floating-header .floating-btn-ctrl:hover {
-    background: rgba(255, 255, 255, 0.25);
-    color: #ffffff;
+#floating-booking-widget .floating-header .floating-btn-ctrl:hover,
+#floating-booking-widget .floating-header .floating-btn-ctrl:active {
+    background: transparent !important;
+    color: #ffffff !important;
+    opacity: 0.75;
 }
 
 .floating-widget .floating-drag-area {
@@ -117,10 +150,11 @@
     flex-shrink: 0;
 }
 
+/* Controls: - is hover kruisje zonder grijze achtergrond */
 .floating-widget .floating-btn-ctrl {
-    background: transparent;
+    background: transparent !important;
     border: none;
-    color: #ffffff;
+    color: #ffffff !important;
     cursor: pointer;
     width: 24px;
     height: 24px;
@@ -128,17 +162,93 @@
     align-items: center;
     justify-content: center;
     border-radius: 0 !important;
-    transition: background 0.15s ease, color 0.15s ease;
+    transition: opacity 0.2s ease;
     padding: 0;
     touch-action: auto;
+    outline: none;
 }
 
 .floating-widget .floating-btn-ctrl:hover {
-    background: rgba(255, 255, 255, 0.25);
+    background: transparent !important;
+    color: #ffffff !important;
+    opacity: 0.75;
 }
 
 .floating-widget .floating-btn-ctrl:active {
-    background: rgba(255, 255, 255, 0.4);
+    background: transparent !important;
+    color: #ffffff !important;
+    opacity: 0.5;
+}
+
+/* Geanimeerde icoontjes voor - x + */
+.floating-widget .ctrl-icon {
+    position: relative;
+    width: 14px;
+    height: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    vertical-align: middle;
+}
+
+.floating-widget .ctrl-icon .ctrl-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #ffffff;
+    margin-top: -1px;
+    border-radius: 1px;
+    transform-origin: center center;
+    transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+}
+
+/* Standaard in titelbalk: Minteken (-) */
+.floating-widget .floating-btn-ctrl .ctrl-icon .ctrl-line.line-1 {
+    transform: rotate(0deg) scaleX(1);
+}
+.floating-widget .floating-btn-ctrl .ctrl-icon .ctrl-line.line-2 {
+    transform: rotate(0deg) scaleX(0);
+    opacity: 0;
+}
+
+/* Hover in titelbalk: Kruisje (×) animatie zonder grijze achtergrond */
+.floating-widget .floating-btn-ctrl:hover .ctrl-icon .ctrl-line.line-1 {
+    transform: rotate(45deg) scaleX(1);
+}
+.floating-widget .floating-btn-ctrl:hover .ctrl-icon .ctrl-line.line-2 {
+    transform: rotate(-45deg) scaleX(1);
+    opacity: 1;
+}
+
+/* Plus (+) icoon in geminimaliseerde pill om te maximaliseren */
+.floating-widget .ctrl-icon.is-plus .ctrl-line.line-1 {
+    transform: rotate(0deg) scaleX(1);
+}
+.floating-widget .ctrl-icon.is-plus .ctrl-line.line-2 {
+    transform: rotate(90deg) scaleX(1);
+    opacity: 1;
+}
+
+.floating-widget .pill-ctrl {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    margin-left: 8px;
+    flex-shrink: 0;
+    background: transparent !important;
+}
+
+.floating-widget .ctrl-icon.is-plus {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.floating-widget .floating-min-pill:hover .ctrl-icon.is-plus {
+    transform: rotate(90deg);
 }
 
 /* Video specific body */
@@ -263,17 +373,17 @@
     cursor: pointer !important; /* Fingertje! */
     user-select: none;
     white-space: nowrap;
-    transition: opacity 0.2s ease, transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.2s;
+    transition: opacity 0.25s ease, transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.25s;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transform: scale(0.85);
+    transform: scale(0.8);
     position: absolute;
-    top: 0;
-    left: 0;
+    bottom: 0;
+    right: 0;
 }
 
-/* Geen hover op de geminimaliseerde popups */
+/* Geen hover achtergrond op de geminimaliseerde popups */
 .floating-widget .floating-min-pill:hover {
     background: #000000 !important;
     color: #ffffff !important;
@@ -301,7 +411,7 @@
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transform: scale(0.85);
+    transform: scale(0.65);
     position: absolute;
     top: 0;
     left: 0;
