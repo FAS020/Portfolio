@@ -48,7 +48,7 @@
         <div class="column column-photos">
             <div class="image-container">
                 <!-- Image Links -->
-                <a href="workshop"><img src="Links/Workshop/1.jpg" alt="Mobiele Workshop"></a>
+                <a href="workshop?from=more-info"><img src="Links/Workshop/1.jpg" alt="Mobiele Workshop"></a>
                 <a href="monoprint"><img src="Links/Monoprint/1.png" alt="Monoprint"></a>
                 <a href="gwa"><img src="Links/GWA/5.jpg" alt="GWA"></a>
                 <a href="woordenboek"><img src="Links/Woordenboek/Woordenboek_1.jpg" alt="Amsterdams Woordenboekkie"></a>
@@ -173,10 +173,10 @@
                     aria-label="Minimaliseren"
                 >
 
-                    <span
-                        class="ctrl-icon"
-                        aria-hidden="true"
-                    ></span>
+                    <span class="ctrl-icon" aria-hidden="true">
+                        <span class="ctrl-line line-1"></span>
+                        <span class="ctrl-line line-2"></span>
+                    </span>
 
                 </button>
 
@@ -196,7 +196,7 @@
 
 
             <a
-                href="workshop"
+                href="workshop?from=more-info"
                 class="booking-more-info-btn"
             >
                 Meer informatie
@@ -409,7 +409,7 @@
     <button
         type="button"
         class="floating-min-pill"
-        aria-label="Open workshop boeken popup"
+        aria-label="Maximaliseren"
     >
 
         <img
@@ -420,6 +420,13 @@
 
         <span class="pill-label">
             'Wat wil jij schreeuwen tegen de wereld?'
+        </span>
+
+        <span class="pill-ctrl" aria-hidden="true">
+            <span class="ctrl-icon is-plus">
+                <span class="ctrl-line line-1"></span>
+                <span class="ctrl-line line-2"></span>
+            </span>
         </span>
 
     </button>
