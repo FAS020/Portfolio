@@ -14,6 +14,9 @@
             this.shield = widgetEl.querySelector('.floating-drag-shield');
             this.resizeBr = widgetEl.querySelector('.floating-resize-br');
 
+            this.isBooking = this.widget.id === 'floating-booking-widget';
+            this.storageKey = this.isBooking ? 'floating_booking_minimized' : 'floating_video_minimized';
+
             this.isDragging = false;
             this.isResizing = false;
             this.hasMoved = false;
@@ -36,15 +39,55 @@
         init() {
             if (!this.widget) return;
 
-            // Wait a tick for initial layout, then center spawn
-            setTimeout(() => {
-                this.normalizePosition();
-            }, 60);
+            // Zorg dat de animatie icoontjes aanwezig zijn in knoppen
+            this.setupControlIcons();
+
+            // Controleer of we zijn doorverwezen via "Meer informatie"
+            let forceOpen = false;
+            if (this.isBooking) {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('from') === 'more-info' || sessionStorage.getItem('force_open_booking') === 'true') {
+                    forceOpen = true;
+                    try {
+                        sessionStorage.removeItem('force_open_booking');
+                        localStorage.setItem(this.storageKey, 'false');
+                    } catch (e) {}
+                }
+            }
+
+            let isStoredMinimized = false;
+            try {
+                isStoredMinimized = !forceOpen && localStorage.getItem(this.storageKey) === 'true';
+            } catch (e) {}
+
+            if (isStoredMinimized) {
+                // Direct geminimaliseerd starten in de rechter onderhoek
+                this.widget.classList.add('is-minimized');
+                this.widget.style.transform = 'none';
+                this.widget.style.right = 'auto';
+                this.widget.style.bottom = 'auto';
+                setTimeout(() => {
+                    const br = this.getBottomRightPosition();
+                    this.widget.style.left = `${br.left}px`;
+                    this.widget.style.top = `${br.top}px`;
+                }, 40);
+            } else {
+                // Direct gecentreerd spawnen met openingsanimatie
+                setTimeout(() => {
+                    this.normalizePosition();
+                    if (this.windowEl) {
+                        this.windowEl.classList.add('popup-enter');
+                        setTimeout(() => {
+                            this.windowEl.classList.remove('popup-enter');
+                        }, 450);
+                    }
+                }, 60);
+            }
 
             // Listeners for window header dragging
             if (this.headerEl) {
                 this.headerEl.addEventListener('pointerdown', (e) => {
-                    // Don't drag if clicking on close button
+                    // Don't drag if clicking on close/minimize button
                     if (e.target.closest('.floating-controls') || e.target.closest('button')) {
                         return;
                     }
@@ -57,9 +100,14 @@
                 this.minPillEl.addEventListener('pointerdown', (e) => {
                     this.startDrag(e, 'pill');
                 });
+
+                this.minPillEl.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.expand();
+                });
             }
 
-            // Close button handler (minimizes window to the button)
+            // Close/minimize button handler
             if (this.closeBtn) {
                 this.closeBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -74,30 +122,73 @@
                 });
             }
 
-            // Reposition on window resize to ensure it stays in viewport
+            // Reposition on window resize to ensure it stays in viewport / docked
             window.addEventListener('resize', () => {
-                this.clampPosition();
+                if (this.widget.classList.contains('is-minimized')) {
+                    const br = this.getBottomRightPosition();
+                    this.widget.style.left = `${br.left}px`;
+                    this.widget.style.top = `${br.top}px`;
+                } else {
+                    this.clampPosition();
+                }
             });
         }
 
-        normalizePosition() {
-            // Spawn directly in the center of the page
-            const width = this.windowEl ? this.windowEl.offsetWidth : (this.widget.offsetWidth || 380);
-            const height = this.windowEl ? this.windowEl.offsetHeight : (this.widget.offsetHeight || 300);
+        setupControlIcons() {
+            // Header sluit-/minimaliseerknop: minteken (-) dat bij hover een kruisje (×) wordt
+            if (this.closeBtn && !this.closeBtn.querySelector('.ctrl-icon')) {
+                this.closeBtn.innerHTML = `
+                    <span class="ctrl-icon" aria-hidden="true">
+                        <span class="ctrl-line line-1"></span>
+                        <span class="ctrl-line line-2"></span>
+                    </span>
+                `;
+            }
 
+            // Geminimaliseerde pill: plusje (+) om te maximaliseren
+            if (this.minPillEl && !this.minPillEl.querySelector('.pill-ctrl')) {
+                const pillCtrl = document.createElement('span');
+                pillCtrl.className = 'pill-ctrl';
+                pillCtrl.setAttribute('aria-hidden', 'true');
+                pillCtrl.innerHTML = `
+                    <span class="ctrl-icon is-plus">
+                        <span class="ctrl-line line-1"></span>
+                        <span class="ctrl-line line-2"></span>
+                    </span>
+                `;
+                this.minPillEl.appendChild(pillCtrl);
+            }
+        }
+
+        getBottomRightPosition() {
+            const marginX = 20;
+            const marginBottom = 20;
+            const pillW = this.minPillEl ? (this.minPillEl.offsetWidth || 240) : 240;
+            const pillH = this.minPillEl ? (this.minPillEl.offsetHeight || 42) : 42;
+            const targetLeft = Math.max(12, window.innerWidth - pillW - marginX);
+            const targetTop = Math.max(52, window.innerHeight - pillH - marginBottom);
+            return { left: targetLeft, top: targetTop };
+        }
+
+        getCenterPosition() {
+            const width = this.windowEl ? (this.windowEl.offsetWidth || 380) : (this.widget.offsetWidth || 380);
+            const height = this.windowEl ? (this.windowEl.offsetHeight || 300) : (this.widget.offsetHeight || 300);
             const centerX = Math.max(12, Math.round((window.innerWidth - width) / 2));
             const centerY = Math.max(52, Math.round((window.innerHeight - height) / 2));
+            return { left: centerX, top: centerY };
+        }
 
+        normalizePosition() {
+            const center = this.getCenterPosition();
             this.widget.style.transform = 'none';
-            this.widget.style.left = `${centerX}px`;
-            this.widget.style.top = `${centerY}px`;
+            this.widget.style.left = `${center.left}px`;
+            this.widget.style.top = `${center.top}px`;
             this.widget.style.right = 'auto';
             this.widget.style.bottom = 'auto';
             this.clampPosition();
         }
 
         startDrag(e, targetType) {
-            // Only primary mouse button or touch
             if (e.button !== undefined && e.button !== 0) return;
 
             this.isDragging = true;
@@ -121,9 +212,7 @@
                 if (e.target.setPointerCapture && e.pointerId !== undefined) {
                     e.target.setPointerCapture(e.pointerId);
                 }
-            } catch (err) {
-                // Ignore
-            }
+            } catch (err) {}
 
             window.addEventListener('pointermove', this.onPointerMove, { passive: false });
             window.addEventListener('pointerup', this.onPointerUp);
@@ -138,7 +227,6 @@
             const dx = e.clientX - this.startX;
             const dy = e.clientY - this.startY;
 
-            // Only count as moved if dragged more than 4 pixels (distinguishes clicks from drags)
             if (!this.hasMoved && Math.hypot(dx, dy) > 4) {
                 this.hasMoved = true;
             }
@@ -169,11 +257,9 @@
                 if (e.target && e.target.releasePointerCapture && this.currentPointerId !== null) {
                     e.target.releasePointerCapture(this.currentPointerId);
                 }
-            } catch (err) {
-                // Ignore
-            }
+            } catch (err) {}
 
-            // If user clicked the pill without dragging, expand the window!
+            // Als op de geminimaliseerde pill is geklikt zonder te slepen, maximaliseer
             if (this.dragTarget === 'pill' && !this.hasMoved) {
                 this.expand();
             }
@@ -195,8 +281,8 @@
             const windowRect = this.windowEl.getBoundingClientRect();
 
             this.startWidth = windowRect.width;
-            this.startRight = widgetRect.right;
             this.startLeft = widgetRect.left;
+            this.startTop = widgetRect.top;
 
             this.widget.classList.add('is-resizing');
             if (this.shield) {
@@ -213,24 +299,42 @@
                 if (!this.isResizing) return;
                 ev.preventDefault();
 
-                // Moving pointer left increases width; moving down increases height (16:9 ratio)
-                const dx = this.startX - ev.clientX;
+                // Slepen naar rechts of beneden vergroot het venster
+                const dx = ev.clientX - this.startX;
                 const dy = ev.clientY - this.startY;
 
-                const effectiveDelta = Math.abs(dx) > Math.abs(dy * 1.5) ? dx : (dy * (16 / 9));
+                // 16:9 beeldverhouding
+                const effectiveDelta = Math.abs(dx) > Math.abs(dy * (16 / 9)) ? dx : (dy * (16 / 9));
 
                 const minW = 260;
-                const maxW = Math.min(680, window.innerWidth - 24);
+                const maxW = Math.min(800, window.innerWidth - 24);
 
                 let newWidth = Math.max(minW, Math.min(maxW, this.startWidth + effectiveDelta));
 
-                // Clamp so left edge stays within screen margin
-                if (this.startRight - newWidth < 12) {
-                    newWidth = this.startRight - 12;
+                const margin = 12;
+                let newLeft = this.startLeft;
+
+                // Schalen naar rechts: als het venster rechts buiten het scherm dreigt te vallen, schaal ook naar links
+                if (newLeft + newWidth > window.innerWidth - margin) {
+                    newLeft = window.innerWidth - margin - newWidth;
+                }
+
+                // Zorg dat linkerrand binnen het scherm blijft
+                if (newLeft < margin) {
+                    newLeft = margin;
+                    newWidth = Math.min(newWidth, window.innerWidth - margin * 2);
                 }
 
                 this.windowEl.style.width = `${newWidth}px`;
-                this.widget.style.left = `${this.startRight - newWidth}px`;
+                this.widget.style.left = `${newLeft}px`;
+
+                // Zorg ook dat onderkant binnen het scherm blijft
+                const approxHeight = (newWidth * 9 / 16) + 38;
+                const marginBottom = 18;
+                if (this.startTop + approxHeight > window.innerHeight - marginBottom) {
+                    const adjustedTop = Math.max(52, window.innerHeight - marginBottom - approxHeight);
+                    this.widget.style.top = `${adjustedTop}px`;
+                }
             };
 
             const onResizeUp = (ev) => {
@@ -249,6 +353,8 @@
                         e.target.releasePointerCapture(e.pointerId);
                     }
                 } catch (err) {}
+
+                this.clampPosition();
             };
 
             window.addEventListener('pointermove', onResizeMove, { passive: false });
@@ -269,8 +375,8 @@
             const height = activeEl.offsetHeight || 220;
 
             const marginX = 12;
-            const marginTop = 52; // Keep clear of fixed top navbar (approx 48px)
-            const marginBottom = 18; // Keep clear of footer
+            const marginTop = 52;
+            const marginBottom = 18;
 
             const minX = marginX;
             const maxX = Math.max(marginX, window.innerWidth - width - marginX);
@@ -284,18 +390,6 @@
             this.widget.style.top = `${clampedTop}px`;
             this.widget.style.right = 'auto';
             this.widget.style.bottom = 'auto';
-
-            // Update transform origin dynamically
-            const isBottomHalf = (clampedTop + height / 2) > (window.innerHeight / 2);
-            const isRightHalf = (clampedLeft + width / 2) > (window.innerWidth / 2);
-            const originY = isBottomHalf ? 'bottom' : 'top';
-            const originX = isRightHalf ? 'right' : 'left';
-            if (this.windowEl) {
-                this.windowEl.style.transformOrigin = `${originY} ${originX}`;
-            }
-            if (this.minPillEl) {
-                this.minPillEl.style.transformOrigin = `${originY} ${originX}`;
-            }
         }
 
         clampPosition() {
@@ -306,35 +400,44 @@
         }
 
         minimize() {
-            const windowRect = this.windowEl.getBoundingClientRect();
-            const pillWidth = this.minPillEl ? (this.minPillEl.offsetWidth || 170) : 170;
-            const pillHeight = this.minPillEl ? (this.minPillEl.offsetHeight || 42) : 42;
+            if (this.widget.classList.contains('is-minimized')) return;
 
-            // Anchor corner preservation: keep the corner closest to screen edge pinned
-            const isBottomHalf = (windowRect.top + windowRect.height / 2) > (window.innerHeight / 2);
-            const isRightHalf = (windowRect.left + windowRect.width / 2) > (window.innerWidth / 2);
+            // Altijd minimaliseren naar de rechter onderhoek
+            const target = this.getBottomRightPosition();
 
-            const targetLeft = isRightHalf ? (windowRect.right - pillWidth) : windowRect.left;
-            const targetTop = isBottomHalf ? (windowRect.bottom - pillHeight) : windowRect.top;
-
+            this.widget.classList.add('is-animating');
             this.widget.classList.add('is-minimized');
-            this.applyClampedPosition(targetLeft, targetTop);
+            this.widget.style.left = `${target.left}px`;
+            this.widget.style.top = `${target.top}px`;
+
+            try {
+                localStorage.setItem(this.storageKey, 'true');
+            } catch (e) {}
+
+            setTimeout(() => {
+                this.widget.classList.remove('is-animating');
+            }, 400);
         }
 
         expand() {
-            const pillRect = (this.minPillEl || this.widget).getBoundingClientRect();
+            if (!this.widget.classList.contains('is-minimized')) return;
 
+            // Altijd weer gecentreerd op de pagina bij maximaliseren, zelfs na verslepen!
+            const center = this.getCenterPosition();
+
+            this.widget.classList.add('is-animating');
             this.widget.classList.remove('is-minimized');
-            const windowWidth = this.windowEl ? (this.windowEl.offsetWidth || 360) : 360;
-            const windowHeight = this.windowEl ? (this.windowEl.offsetHeight || 240) : 240;
+            this.widget.style.left = `${center.left}px`;
+            this.widget.style.top = `${center.top}px`;
 
-            const isBottomHalf = (pillRect.top + pillRect.height / 2) > (window.innerHeight / 2);
-            const isRightHalf = (pillRect.left + pillRect.width / 2) > (window.innerWidth / 2);
+            try {
+                localStorage.setItem(this.storageKey, 'false');
+            } catch (e) {}
 
-            const targetLeft = isRightHalf ? (pillRect.right - windowWidth) : pillRect.left;
-            const targetTop = isBottomHalf ? (pillRect.bottom - windowHeight) : pillRect.top;
-
-            this.applyClampedPosition(targetLeft, targetTop);
+            setTimeout(() => {
+                this.widget.classList.remove('is-animating');
+                this.clampPosition();
+            }, 400);
         }
     }
 
@@ -364,17 +467,25 @@
         const resetBtn = widgetEl.querySelector('.booking-reset-btn');
         const moreInfoBtn = widgetEl.querySelector('.booking-more-info-btn');
 
-        // If on workshop.html already, clicking "Meer informatie" shows/scrolls to project info
-        if (moreInfoBtn && (window.location.pathname.endsWith('workshop') || window.location.pathname.endsWith('workshop.html'))) {
+        // Klik op "Meer informatie" knop: forceer openen van popup op workshop pagina
+        if (moreInfoBtn) {
             moreInfoBtn.addEventListener('click', (e) => {
-                const infoLink = document.querySelector('#info-link a');
-                const columnInfo = document.querySelector('.column-info');
-                if (infoLink) {
-                    e.preventDefault();
-                    infoLink.click();
-                } else if (columnInfo) {
-                    e.preventDefault();
-                    columnInfo.scrollIntoView({ behavior: 'smooth' });
+                try {
+                    sessionStorage.setItem('force_open_booking', 'true');
+                    localStorage.setItem('floating_booking_minimized', 'false');
+                } catch (err) {}
+
+                // Indien reeds op workshop.html, scroll naar project info
+                if (window.location.pathname.endsWith('workshop') || window.location.pathname.endsWith('workshop.html')) {
+                    const infoLink = document.querySelector('#info-link a');
+                    const columnInfo = document.querySelector('.column-info');
+                    if (infoLink) {
+                        e.preventDefault();
+                        infoLink.click();
+                    } else if (columnInfo) {
+                        e.preventDefault();
+                        columnInfo.scrollIntoView({ behavior: 'smooth' });
+                    }
                 }
             });
         }
