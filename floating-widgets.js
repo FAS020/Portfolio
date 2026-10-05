@@ -1,6 +1,6 @@
 /**
  * Draggable Floating Widgets (Video Window & Workshop Booking Popup)
- * Franco Soolsma   Portfolio
+ * Franco Soolsma Portfolio
  */
 
 (function () {
