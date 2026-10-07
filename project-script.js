@@ -133,6 +133,14 @@ document.addEventListener('DOMContentLoaded', () => {
         navCloseBtn.addEventListener('click', closeExpandedView);
     }
 
+    // Binnenkomst via "Meer informatie" (#project-info): op mobiel direct de tekst tonen, zonder swipe-animatie
+    if (isMobile() && window.location.hash === '#project-info') {
+        columnInfo.classList.add('show');
+        container.style.scrollBehavior = 'auto';
+        container.scrollLeft = columnInfo.offsetLeft;
+        container.style.scrollBehavior = '';
+    }
+
     // Initialiseer de titel berekening
     calculateTitleSlide();
     

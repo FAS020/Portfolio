@@ -55,9 +55,14 @@
                 }
             }
 
-            let isStoredMinimized = false;
+            // Op mobiel via "Meer informatie" (#project-info): popup geminimaliseerd zodat de tekst zichtbaar blijft
+            const showInfoOnMobile = this.isBooking
+                && window.matchMedia('(max-width: 768px)').matches
+                && window.location.hash === '#project-info';
+
+            let isStoredMinimized = showInfoOnMobile;
             try {
-                isStoredMinimized = !forceOpen && localStorage.getItem(this.storageKey) === 'true';
+                isStoredMinimized = showInfoOnMobile || (!forceOpen && localStorage.getItem(this.storageKey) === 'true');
             } catch (e) {}
 
             if (isStoredMinimized) {
