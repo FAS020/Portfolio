@@ -223,13 +223,13 @@
     opacity: 1;
 }
 
-/* Plus (+) icoon in geminimaliseerde pill om te maximaliseren */
+/* Standaard in geminimaliseerde pill op desktop: Minteken (-) */
 .floating-widget .ctrl-icon.is-plus .ctrl-line.line-1 {
     transform: rotate(0deg) scaleX(1);
 }
 .floating-widget .ctrl-icon.is-plus .ctrl-line.line-2 {
-    transform: rotate(90deg) scaleX(1);
-    opacity: 1;
+    transform: rotate(90deg) scaleX(0);
+    opacity: 0;
 }
 
 .floating-widget .pill-ctrl {
@@ -243,12 +243,11 @@
     background: transparent !important;
 }
 
-.floating-widget .ctrl-icon.is-plus {
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.floating-widget .floating-min-pill:hover .ctrl-icon.is-plus {
-    transform: rotate(90deg);
+/* Hover in geminimaliseerde pill op desktop: Minteken (-) wordt een Plusje (+) */
+.floating-widget .floating-min-pill:hover .ctrl-icon.is-plus .ctrl-line.line-2,
+.floating-widget .floating-min-pill:focus-visible .ctrl-icon.is-plus .ctrl-line.line-2 {
+    transform: rotate(90deg) scaleX(1);
+    opacity: 1;
 }
 
 /* Video specific body */
@@ -594,5 +593,47 @@
     .booking-form-group select,
     .booking-form-group textarea {
         font-size: 16px !important; /* Prevents auto-zoom on iOS Safari */
+    }
+
+    /* Geminimaliseerde knop op mobile: compact vierkant blokje met alleen het icoon */
+    .floating-widget .floating-min-pill {
+        width: 44px !important;
+        height: 44px !important;
+        min-width: 44px !important;
+        min-height: 44px !important;
+        padding: 0 !important;
+        gap: 0 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        box-sizing: border-box !important;
+        border-radius: 0 !important;
+    }
+
+    /* Verberg titel en plus/min-icoon op mobiel bij geminimaliseerde staat */
+    .floating-widget .floating-min-pill .floating-title,
+    .floating-widget .floating-min-pill .pill-label,
+    .floating-widget .floating-min-pill .pill-ctrl {
+        display: none !important;
+    }
+
+    /* Video icoon (play) centreren in het blokje */
+    .floating-widget .floating-min-pill .pill-icon {
+        font-size: 14px !important;
+        line-height: 1 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 !important;
+        margin-left: 2px !important; /* optische centrering voor play-driehoek */
+        color: #ffffff !important;
+    }
+
+    /* Speech icoon centreren in het blokje */
+    .floating-widget .floating-min-pill .pill-speech-icon {
+        width: 22px !important;
+        height: 22px !important;
+        margin: 0 !important;
+        display: block !important;
     }
 }

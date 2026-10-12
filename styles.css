@@ -527,3 +527,66 @@ footer {
 .title-content--four-lines p {
     margin: 0;
 }
+
+/* ==========================================================================
+   Image Download & Drag Protection
+   ========================================================================== */
+img, picture, svg, video {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+    -webkit-touch-callout: none; /* Voorkomt iOS Safari opslaan/delen menu */
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* ==========================================================================
+   Screenshot & Print Protection (Blackout Overlay)
+   ========================================================================== */
+#screenshot-shield {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000000 !important;
+    z-index: 999999999;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.05s ease, visibility 0.05s ease;
+}
+
+body.screenshot-active #screenshot-shield {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: all !important;
+}
+
+body.screenshot-active img,
+body.screenshot-active video,
+body.screenshot-active iframe {
+    filter: brightness(0) !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+@media print {
+    html, body {
+        background-color: #000000 !important;
+        color: #000000 !important;
+    }
+    body * {
+        visibility: hidden !important;
+    }
+    body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: #000000 !important;
+        z-index: 999999999;
+        visibility: visible !important;
+    }
+}

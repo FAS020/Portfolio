@@ -161,10 +161,13 @@
         }
 
         getBottomRightPosition() {
-            const marginX = 20;
-            const marginBottom = 20;
-            const pillW = this.minPillEl ? (this.minPillEl.offsetWidth || 240) : 240;
-            const pillH = this.minPillEl ? (this.minPillEl.offsetHeight || 42) : 42;
+            const isMobile = window.innerWidth <= 768;
+            const marginX = isMobile ? 14 : 20;
+            const marginBottom = isMobile ? 14 : 20;
+            const defaultW = isMobile ? 44 : 240;
+            const defaultH = isMobile ? 44 : 42;
+            const pillW = this.minPillEl ? (this.minPillEl.offsetWidth || defaultW) : defaultW;
+            const pillH = this.minPillEl ? (this.minPillEl.offsetHeight || defaultH) : defaultH;
             const targetLeft = Math.max(12, window.innerWidth - pillW - marginX);
             const targetTop = Math.max(52, window.innerHeight - pillH - marginBottom);
             return { left: targetLeft, top: targetTop };
@@ -402,11 +405,11 @@
         minimize() {
             if (this.widget.classList.contains('is-minimized')) return;
 
-            // Altijd minimaliseren naar de rechter onderhoek
-            const target = this.getBottomRightPosition();
-
             this.widget.classList.add('is-animating');
             this.widget.classList.add('is-minimized');
+
+            // Altijd minimaliseren naar de rechter onderhoek
+            const target = this.getBottomRightPosition();
             this.widget.style.left = `${target.left}px`;
             this.widget.style.top = `${target.top}px`;
 
