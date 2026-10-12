@@ -1,0 +1,111 @@
+# ==============================================================================
+# robots.txt for Franco Soolsma Portfolio (francosoolsma.nl)
+# ==============================================================================
+# Toegestaan: Standaard zoekmachines (Google, Bing, DuckDuckGo, etc.)
+# zodat potentiële opdrachtgevers en bezoekers Franco Soolsma kunnen vinden.
+#
+# Geblokkeerd: AI web crawlers, AI training bots en geautomatiseerde scrapers
+# (OpenAI, Anthropic, Google Gemini training, Common Crawl, Meta, etc.)
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. STANDAARD ZOEKMACHINES (TOEGESTAAN VOOR VINDBAARHEID)
+# ------------------------------------------------------------------------------
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: *
+Allow: /
+
+# ------------------------------------------------------------------------------
+# 2. AI MODEL TRAINING & AI SCRAPERS (STRIKT GEBLOKKEERD)
+# ------------------------------------------------------------------------------
+
+# OpenAI (ChatGPT & model training)
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: OAI-SearchBot
+Disallow: /
+
+# Google AI (Gemini & Vertex training - reguliere Googlebot blijft toegestaan!)
+User-agent: Google-Extended
+Disallow: /
+
+# Anthropic (Claude)
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+# Common Crawl (Gebruikt door talloze LLM's en beeldmodellen)
+User-agent: CCBot
+Disallow: /
+
+# Meta (Llama & Meta AI)
+User-agent: Meta-ExternalAgent
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
+
+# Apple AI training (reguliere Applebot voor Siri/zoekresultaten blijft toegestaan)
+User-agent: Applebot-Extended
+Disallow: /
+
+# Perplexity AI
+User-agent: PerplexityBot
+Disallow: /
+
+# ByteDance / TikTok AI
+User-agent: Bytespider
+Disallow: /
+
+# Beeld- en data scraping bots
+User-agent: Diffbot
+Disallow: /
+
+User-agent: ImagesiftBot
+Disallow: /
+
+User-agent: cohere-ai
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+User-agent: Omgilibot
+Disallow: /
+
+User-agent: YouBot
+Disallow: /
+
+User-agent: Timpibot
+Disallow: /
+
+# ------------------------------------------------------------------------------
+# 3. EU TEXT & DATA MINING RESERVATION (EU Auteurswet Richtlijn 2019/790 Art. 4)
+# ------------------------------------------------------------------------------
+# Alle rechten voorbehouden conform Artikel 4, lid 3 van Richtlijn (EU) 2019/790.
+# Geautomatiseerd scannen, scrapen en trainen van AI-modellen op beelden en teksten
+# van deze website is uitdrukkelijk verboden zonder schriftelijke toestemming.
+

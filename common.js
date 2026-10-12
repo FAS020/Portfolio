@@ -74,6 +74,9 @@ function initImageProtection() {
 
 /**
  * Detecteert screenshot pogingen en maakt de pagina / afbeeldingen direct zwart.
+ * Werkt volgens het Banken & Incognito-principe: zodra het venster focus verliest
+ * (zoals bij macOS Cmd+Shift+4, Windows Snipping Tool, of externe screenshot apps),
+ * wordt het scherm direct 100% zwart.
  */
 function initScreenshotProtection() {
     // Zorg dat het blackout schild element in de DOM staat
@@ -82,94 +85,109 @@ function initScreenshotProtection() {
         shield = document.createElement('div');
         shield.id = 'screenshot-shield';
         shield.setAttribute('aria-hidden', 'true');
+        shield.innerHTML = '<span class="shield-notice">Franco Soolsma — Beveiligde weergave</span>';
         document.body.appendChild(shield);
     }
 
-    let blackoutTimer = null;
-
-    const triggerBlackout = (duration = 2000) => {
+    const enableBlackout = () => {
+        document.documentElement.classList.add('screenshot-active');
         document.body.classList.add('screenshot-active');
+    };
 
-        // Wis het klembord om eventuele gekopieerde screenshots/data te overschrijven
+    const disableBlackout = () => {
+        document.documentElement.classList.remove('screenshot-active');
+        document.body.classList.remove('screenshot-active');
+    };
+
+    const wipeClipboard = () => {
         try {
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText('');
             }
         } catch (err) {}
-
-        clearTimeout(blackoutTimer);
-        blackoutTimer = setTimeout(() => {
-            document.body.classList.remove('screenshot-active');
-        }, duration);
     };
 
-    // Herstel direct wanneer gebruiker weer actief focust of klikt
-    const cancelBlackout = () => {
-        if (document.body.classList.contains('screenshot-active')) {
-            document.body.classList.remove('screenshot-active');
-            clearTimeout(blackoutTimer);
-        }
+    // Tracking van interactie met YouTube iframes om valse blackouts te voorkomen
+    let isOverIframe = false;
+    const registerIframes = () => {
+        document.querySelectorAll('iframe').forEach(iframe => {
+            iframe.addEventListener('pointerenter', () => { isOverIframe = true; });
+            iframe.addEventListener('pointerleave', () => { isOverIframe = false; });
+            iframe.addEventListener('mouseenter', () => { isOverIframe = true; });
+            iframe.addEventListener('mouseleave', () => { isOverIframe = false; });
+        });
     };
+    registerIframes();
+    if (window.MutationObserver) {
+        new MutationObserver(registerIframes).observe(document.body, { childList: true, subtree: true });
+    }
 
-    window.addEventListener('focus', cancelBlackout);
-
-    // Track of screenshot modifier toetsen (Cmd / Ctrl / Shift) worden ingedrukt
-    let modifierActive = false;
-
-    window.addEventListener('keydown', (e) => {
-        // Windows / Linux PrintScreen toets
-        if (e.key === 'PrintScreen' || e.code === 'PrintScreen' || e.keyCode === 44) {
-            triggerBlackout(2500);
+    // 1. BANKEN & INCOGNITO METHODE:
+    // Zodra het venster focus verliest (bv. door Mac Cmd+Shift+4 draadkruis, Windows Snipping Tool,
+    // of externe screenshot apps zoals CleanShot, Lightshot, Shottr etc.) -> direct zwart!
+    window.addEventListener('blur', () => {
+        // Uitzondering: gebruiker klikte op een video iframe (YouTube) om af te spelen
+        if (isOverIframe || (document.activeElement && document.activeElement.tagName === 'IFRAME')) {
             return;
         }
+        enableBlackout();
+    });
 
-        // Mac screenshot sneltoetsen: Cmd + Shift + 3, Cmd + Shift + 4, Cmd + Shift + 5, Cmd + Shift + 6
-        const isMacScreenshot = (e.metaKey && e.shiftKey) && (
-            e.key === '3' || e.key === '4' || e.key === '5' || e.key === '6' ||
-            e.code === 'Digit3' || e.code === 'Digit4' || e.code === 'Digit5' || e.code === 'Digit6'
-        );
+    // Zodra de gebruiker weer terugkeert op de website -> herstel weergave
+    window.addEventListener('focus', () => {
+        disableBlackout();
+    });
 
-        // Windows Snipping Tool / Snip & Sketch: Win+Shift+S of Ctrl+Shift+S
-        const isWindowsSnipping = (e.shiftKey && (e.metaKey || e.ctrlKey)) && (
-            e.key === 's' || e.key === 'S' || e.code === 'KeyS'
-        );
-
-        if (isMacScreenshot || isWindowsSnipping) {
-            triggerBlackout(2500);
-            return;
-        }
-
-        if (e.metaKey || e.ctrlKey || e.shiftKey) {
-            modifierActive = true;
+    // Wanneer het tabblad geminimaliseerd of verborgen wordt
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            enableBlackout();
+        } else {
+            disableBlackout();
         }
     });
+
+    // 2. SNELTOETSEN DETECTIE (VOORAF INGRIJPEN):
+    // Zodra Cmd+Shift (Mac) of Ctrl+Shift (Windows) wordt ingedrukt, verduister DIRECT
+    // voordat de '3', '4' of 's' toets zelfs maar verwerkt is!
+    window.addEventListener('keydown', (e) => {
+        // Windows PrintScreen toets
+        if (e.key === 'PrintScreen' || e.code === 'PrintScreen' || e.keyCode === 44) {
+            enableBlackout();
+            wipeClipboard();
+            return;
+        }
+
+        // Mac: Cmd + Shift combinaties (Cmd+Shift+3, Cmd+Shift+4, etc.)
+        // Windows: Ctrl + Shift / Win + Shift
+        if ((e.metaKey || e.ctrlKey) && e.shiftKey) {
+            // Uitzondering voor Redo (Cmd+Shift+Z) in formuliervelden
+            if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') && (e.key === 'z' || e.key === 'Z')) {
+                return;
+            }
+            enableBlackout();
+            wipeClipboard();
+            return;
+        }
+    }, true);
 
     window.addEventListener('keyup', (e) => {
         if (e.key === 'PrintScreen' || e.code === 'PrintScreen' || e.keyCode === 44) {
-            triggerBlackout(2500);
+            enableBlackout();
+            wipeClipboard();
         }
-        modifierActive = false;
-    });
-
-    // Wanneer een screenshot tool (zoals Mac Cmd+Shift+4 crosshair of Windows Snipping Tool) focus steelt
-    window.addEventListener('blur', () => {
-        if (modifierActive) {
-            triggerBlackout(3000);
+        // Als modifier toetsen zijn losgelaten en het venster heeft focus, herstel
+        if (!e.metaKey && !e.ctrlKey && !e.shiftKey && document.hasFocus()) {
+            disableBlackout();
         }
-    });
+    }, true);
 
-    // Detecteer print / opslaan als PDF acties
+    // 3. PRINT & PDF BLOKKADE
     window.addEventListener('beforeprint', () => {
-        triggerBlackout(5000);
+        enableBlackout();
     });
 
-    // Ondersteuning voor matchMedia print
-    if (window.matchMedia) {
-        const mediaQueryList = window.matchMedia('print');
-        mediaQueryList.addEventListener?.('change', (mql) => {
-            if (mql.matches) {
-                triggerBlackout(5000);
-            }
-        });
-    }
+    window.addEventListener('afterprint', () => {
+        disableBlackout();
+    });
 }

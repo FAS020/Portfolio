@@ -593,25 +593,44 @@ img, picture, svg, video {
     width: 100vw;
     height: 100vh;
     background-color: #000000 !important;
-    z-index: 999999999;
+    z-index: 2147483647 !important;
+    display: none;
+    align-items: center;
+    justify-content: center;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transition: opacity 0.05s ease, visibility 0.05s ease;
+    transition: none !important;
+}
+
+#screenshot-shield .shield-notice {
+    font-family: 'DINBold', Arial, sans-serif;
+    color: #333333;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    user-select: none;
+}
+
+html.screenshot-active,
+body.screenshot-active {
+    background-color: #000000 !important;
 }
 
 body.screenshot-active #screenshot-shield {
+    display: flex !important;
     opacity: 1 !important;
     visibility: visible !important;
     pointer-events: all !important;
 }
 
-body.screenshot-active img,
-body.screenshot-active video,
-body.screenshot-active iframe {
-    filter: brightness(0) !important;
-    opacity: 0 !important;
+body.screenshot-active * {
     visibility: hidden !important;
+}
+
+body.screenshot-active #screenshot-shield,
+body.screenshot-active #screenshot-shield * {
+    visibility: visible !important;
 }
 
 @media print {
