@@ -133,6 +133,38 @@
         font-size: calc((100dvh - 12rem) / 2) !important;
         line-height: 1 !important;
     }
+
+    /* ==========================================================================
+       Adversarial Anti-AI & Anti-Plagiaat Weergave (Mobile)
+       Verstoort AI-training, img2img en vector-tracing, maar behoudt een strakke,
+       tactiele analoog-grafische printkwaliteit voor het menselijk oog.
+       ========================================================================== */
+    .image-container img,
+    .column-photos img,
+    .content-section img {
+        filter: url(#anti-ai-shield);
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+    }
+
+    .image-container {
+        position: relative;
+    }
+
+    .image-container::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 2;
+        background-image: 
+            radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.08) 1px, transparent 1px),
+            repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 1px, transparent 1px, transparent 4px),
+            repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.02) 0px, rgba(0, 0, 0, 0.02) 1px, transparent 1px, transparent 4px);
+        background-size: 3px 3px, 6px 6px, 6px 6px;
+        mix-blend-mode: multiply;
+        opacity: 0.85;
+    }
 }
 
 /* Verberg de "Werk" link standaard op desktop */

@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 3. Screenshot detectie en verduistering (banken / incognito modus)
     initScreenshotProtection();
+
+    // 4. Anti-AI & Anti-Plagiaat Adversarial Distortion Layer (Glaze / Nightshade principe)
+    initAdversarialProtection();
 });
 
 /**
@@ -219,4 +222,43 @@ function initScreenshotProtection() {
     window.addEventListener('afterprint', () => {
         disableBlackout(true);
     });
+}
+
+/**
+ * Injecteert een wiskundige hoogfrequente vervormingsfilter (SVG) die beelden op mobiel
+ * beschermt tegen AI-training, img2img generatie en automatische vector-tracing.
+ * Gebaseerd op het Glaze / Nightshade principe: subpixel fractale perturbaties die
+ * voor het menselijk oog natuurlijk samensmelten (als fijne analoge print-grain),
+ * maar de neurale netwerken van AI en vector-tracing algoritmes verstoren.
+ */
+function initAdversarialProtection() {
+    if (document.getElementById('anti-ai-shield-svg')) return;
+
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.id = 'anti-ai-shield-svg';
+    svg.setAttribute('width', '0');
+    svg.setAttribute('height', '0');
+    svg.style.position = 'absolute';
+    svg.style.pointerEvents = 'none';
+    svg.style.opacity = '0';
+    svg.setAttribute('aria-hidden', 'true');
+
+    svg.innerHTML = `
+        <defs>
+            <filter id="anti-ai-shield" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+                <!-- 1. Hoogfrequente fractale ruis (Glaze / Nightshade principe) -->
+                <feTurbulence type="fractalNoise" baseFrequency="0.55" numOctaves="3" result="noise" />
+                <!-- 2. Subpixel verplaatsing: verstoort AI latente vectoren en vector-tracing, maar oog ziet natuurlijke print-grain -->
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.6" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+                <!-- 3. Micro-dither matrix die AI-stijlherkenning ontregelt -->
+                <feColorMatrix type="matrix" values="0.96 0 0 0 0.02
+                                                    0 0.96 0 0 0.02
+                                                    0 0 0.96 0 0.02
+                                                    0 0 0 0.10 0" in="noise" result="grain" />
+                <feBlend mode="multiply" in="displaced" in2="grain" result="final" />
+            </filter>
+        </defs>
+    `;
+
+    document.body.appendChild(svg);
 }
